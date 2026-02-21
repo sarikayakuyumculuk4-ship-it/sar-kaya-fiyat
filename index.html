@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sarıkaya Kuyumculuk</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f4f4;
+    text-align:center;
+    margin:0;
+    padding:0;
+}
+
+h1{
+    background:#111;
+    color:white;
+    padding:20px;
+    margin:0;
+}
+
+.container{
+    margin-top:30px;
+}
+
+.card{
+    background:white;
+    margin:15px auto;
+    padding:20px;
+    width:300px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.price{
+    font-size:24px;
+    font-weight:bold;
+    color:#c59d00;
+}
+
+.update{
+    margin-top:20px;
+    color:gray;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>SARIKAYA KUYUMCULUK</h1>
+
+<div class="container">
+
+    <div class="card">
+        <h3>Has Altın</h3>
+        <div class="price" id="hasAltin">Yükleniyor...</div>
+    </div>
+
+    <div class="card">
+        <h3>22 Ayar Alış</h3>
+        <div class="price" id="ayar22Alis">Yükleniyor...</div>
+    </div>
+
+    <div class="card">
+        <h3>22 Ayar Satış</h3>
+        <div class="price" id="ayar22Satis">Yükleniyor...</div>
+    </div>
+
+</div>
+
+<div class="update" id="updateTime"></div>
+
+<script>
+
+async function fiyatGetir(){
+
+    try{
+        // Harem Altın API (Has Altın için)
+        const response = await fetch("https://api.haremaltin.com/v1/quote?symbol=HASALTIN");
+        const data = await response.json();
+
+        let has = data.ask; // has satış fiyatı
+
+        // 22 ayar hesaplama
+        let ayar22Alis = has * 0.913;
+        let ayar22Satis = has * 0.930;
+
+        document.getElementById("hasAltin").innerText = has.toFixed(2) + " ₺";
+        document.getElementById("ayar22Alis").innerText = ayar22Alis.toFixed(2) + " ₺";
+        document.getElementById("ayar22Satis").innerText = ayar22Satis.toFixed(2) + " ₺";
+
+        document.getElementById("updateTime").innerText = 
+            "Son Güncelleme: " + new Date().toLocaleString();
+
+    }catch(error){
+        document.getElementById("hasAltin").innerText = "Veri alınamadı";
+    }
+}
+
+fiyatGetir();
+setInterval(fiyatGetir, 60000);
+
+</script>
+
+</body>
+</html>
