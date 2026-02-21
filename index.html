@@ -3,168 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sarıkaya Kuyumculuk | Menemen</title>
+    <title>Sarıkaya Kuyumculuk | Menemen Canlı Altın Piyasası</title>
     <style>
         :root {
-            --gold-primary: #c5a059;
-            --gold-dark: #8e6d13;
-            --bg-white: #ffffff;
-            --soft-gray: #f8f9fa;
+            --lux-gold: #d4af37;
+            --dark-gold: #b8860b;
+            --pure-white: #ffffff;
+            --text-gray: #444;
         }
         
         body { 
             margin:0; 
-            font-family: 'Poppins', sans-serif; 
-            background-color: var(--bg-white); 
-            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); /* Hafif doku */
-            color: #333; 
+            font-family: 'Playfair Display', serif; 
+            background: var(--pure-white); 
+            color: #222; 
         }
 
+        /* Header Tasarımı */
         header { 
             background: #fff; 
-            color: var(--gold-primary); 
-            padding: 40px 20px; 
+            padding: 50px 20px; 
             text-align: center; 
-            border-bottom: 4px solid var(--gold-primary);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-bottom: 1px solid #eee;
         }
 
-        header h1 { 
+        .logo-area h1 { 
             margin: 0; 
-            font-size: 32px; 
-            letter-spacing: 4px; 
+            font-size: 42px; 
+            letter-spacing: 6px; 
             text-transform: uppercase;
-            font-weight: 800;
+            color: #1a1a1a;
+            font-weight: 300;
+        }
+
+        .gold-divider {
+            width: 100px;
+            height: 3px;
+            background: var(--lux-gold);
+            margin: 15px auto;
+        }
+
+        /* Dükkan Görsel Alanı */
+        .hero-image {
+            width: 100%;
+            max-width: 900px;
+            height: 400px;
+            margin: 20px auto;
+            background: url('sarikaya-dukkan.jpg') center/cover no-repeat;
+            border-radius: 15px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            border: 5px solid #fff;
         }
 
         .container { 
             max-width: 1200px; 
-            margin: 40px auto; 
+            margin: 50px auto; 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
-            gap: 30px; 
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); 
+            gap: 40px; 
             padding: 0 20px; 
         }
 
         .box { 
             background: #fff; 
-            padding: 30px; 
-            border-radius: 20px; 
-            border: 1px solid #eee;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            padding: 40px; 
+            border-radius: 2px; 
+            border: 1px solid #e5e5e5;
             position: relative;
-            overflow: hidden;
         }
 
-        .box::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 5px;
-            background: linear-gradient(90deg, var(--gold-primary), var(--gold-dark));
-        }
-
-        .title { 
-            font-weight: bold; 
-            margin-bottom: 25px; 
-            font-size: 22px; 
-            color: var(--gold-dark); 
-            border-bottom: 2px solid #f1f1f1; 
+        .box-title { 
+            font-size: 24px; 
+            color: var(--dark-gold); 
+            margin-bottom: 30px; 
+            border-bottom: 1px solid #eee;
             padding-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
+            letter-spacing: 2px;
         }
 
         .row { 
             display: flex; 
             justify-content: space-between; 
-            padding: 15px 0; 
-            border-bottom: 1px solid #f9f9f9; 
-            align-items: center; 
+            padding: 18px 0; 
+            border-bottom: 1px solid #f7f7f7; 
+            font-family: 'Inter', sans-serif;
         }
 
-        .row:last-child { border-bottom: none; }
+        .name { font-weight: 500; font-size: 18px; color: #333; }
+        .buy { color: #2ecc71; font-weight: bold; font-size: 20px; }
+        .sell { color: #e74c3c; font-weight: bold; font-size: 20px; margin-left: 20px; }
 
-        .name { font-weight: 600; font-size: 17px; color: #444; }
-
-        .values { text-align: right; }
-
-        .buy { color: #27ae60; font-weight: bold; font-size: 18px; margin-right: 15px; }
-        .sell { color: #e74c3c; font-weight: bold; font-size: 18px; }
-
+        /* Alt Bilgi - Footer */
         footer {
-            background: #1a1a1a;
-            color: #fff;
-            padding: 50px 20px;
-            margin-top: 60px;
+            background: #fdfdfd;
+            padding: 80px 20px;
+            border-top: 1px solid #eee;
             text-align: center;
-            border-top: 5px solid var(--gold-primary);
+            margin-top: 100px;
         }
 
-        .footer-content { max-width: 800px; margin: 0 auto; }
-        .footer-content p { margin: 10px 0; font-size: 16px; opacity: 0.9; }
-        .footer-content .gold-text { color: var(--gold-primary); font-weight: bold; }
+        .footer-info { max-width: 700px; margin: 0 auto; line-height: 1.8; }
+        .footer-info h3 { color: var(--lux-gold); font-size: 22px; margin-bottom: 20px; }
+        .contact-item { font-size: 17px; margin: 10px 0; color: #555; }
 
-        .update { 
-            font-size: 13px; 
-            color: #888; 
-            margin-top: 20px;
-            font-style: italic;
+        .update-tag { 
+            display: inline-block;
+            margin-top: 30px;
+            background: #f9f9f9;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 12px;
+            color: #999;
         }
 
         @media (max-width: 600px) {
             .container { grid-template-columns: 1fr; }
-            .buy, .sell { font-size: 16px; }
+            .hero-image { height: 250px; }
+            .logo-area h1 { font-size: 24px; }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <header>
-    <h1>SARIKAYA KUYUMCULUK</h1>
-    <div style="font-size: 14px; color: #666; margin-top: 10px;">Güvenin ve Kalitenin Adresi</div>
+    <div class="logo-area">
+        <h1>SARIKAYA KUYUMCULUK</h1>
+        <div class="gold-divider"></div>
+        <p style="font-size: 16px; color: #888; font-style: italic;">19xx'den Beri Güvenle...</p>
+    </div>
 </header>
+
+<div class="hero-image"></div>
 
 <div class="container">
     <div class="box">
-        <div class="title">Altın Piyasası <span style="font-size: 11px; color: #999;">ALIŞ / SATIŞ</span></div>
+        <div class="box-title">ALTIN BORSASI</div>
         <div id="altinList"></div>
     </div>
 
     <div class="box">
-        <div class="title">Döviz Piyasası <span style="font-size: 11px; color: #999;">ALIŞ / SATIŞ</span></div>
+        <div class="box-title">DÖVİZ KURLARI</div>
         <div id="dovizList"></div>
     </div>
 </div>
 
 <footer>
-    <div class="footer-content">
-        <p class="gold-text" style="font-size: 20px;">İLETİŞİM BİLGİLERİ</p>
-        <p><strong>Adres:</strong> Mithatpaşa mahallesi, Ertuğrul Cd. No:14, 35660 Menemen/İzmir</p>
-        <p><strong>Telefon:</strong> <a href="tel:02328310055" style="color: #fff; text-decoration: none;">(0232) 831 00 55</a></p>
-        <div class="update" id="update">Fiyatlar güncelleniyor...</div>
+    <div class="footer-info">
+        <h3>İLETİŞİM</h3>
+        <p class="contact-item"><strong>Adres:</strong> Mithatpaşa mahallesi, Ertuğrul Cd. No:14, 35660 Menemen/İzmir</p>
+        <p class="contact-item"><strong>Telefon:</strong> <a href="tel:02328310055" style="color: #222; text-decoration: none;">(0232) 831 00 55</a></p>
+        <div class="update-tag" id="update">Fiyatlar senkronize ediliyor...</div>
     </div>
 </footer>
 
 <script>
-async function getir(){
+async function piyasaVerisi() {
     try {
-        let dovizRes = await fetch("https://open.er-api.com/v6/latest/USD");
-        let dovizData = await dovizRes.json();
-        let usdTry = dovizData.rates.TRY;
+        const dovizRes = await fetch("https://open.er-api.com/v6/latest/USD");
+        const dovizData = await dovizRes.json();
+        const usdTry = dovizData.rates.TRY;
 
-        let altinRes = await fetch("https://api.gold-api.com/price/XAU");
-        let altinData = await altinRes.json();
-        let onsUSD = altinData.price;
+        const altinRes = await fetch("https://api.gold-api.com/price/XAU");
+        const altinData = await altinRes.json();
+        const onsUSD = altinData.price;
 
-        /* Harem Altın seviyesine çekmek için çarpanı 1.055 yaptık. 
-           Eğer hala düşük kalırsa 1.055'i 1.060 yapabilirsin.
+        /* HAREM ALTIN AYARI (7393-7431 Hedefi)
+           Buradaki 1.058 çarpanı, piyasa hareketine göre fiyatı 
+           tam istediğin 7400 seviyelerine oturtur.
         */
-        let turkiyePrimi = 1.055; 
+        let turkiyePrimi = 1.058; 
         let hasBase = (onsUSD / 31.1035) * usdTry * turkiyePrimi;
 
-        let altinlar = [
+        const altinlar = [
             {isim:"HAS ALTIN", alis:hasBase * 0.998, satis:hasBase * 1.002},
             {isim:"22 AYAR", alis:hasBase * 0.913, satis:hasBase * 0.930},
             {isim:"ÇEYREK ALTIN", alis:hasBase * 1.62, satis:hasBase * 1.64},
@@ -173,47 +185,34 @@ async function getir(){
             {isim:"ATA LİRA", alis:hasBase * 6.68, satis:hasBase * 6.715}
         ];
 
-        let altinHTML="";
-        altinlar.forEach(x=>{
-            altinHTML+=`
+        let htmlA = "";
+        altinlar.forEach(x => {
+            htmlA += `
             <div class="row">
                 <div class="name">${x.isim}</div>
-                <div class="values">
+                <div>
                     <span class="buy">${Math.floor(x.alis).toLocaleString('tr-TR')} ₺</span>
                     <span class="sell">${Math.ceil(x.satis).toLocaleString('tr-TR')} ₺</span>
                 </div>
             </div>`;
         });
-        document.getElementById("altinList").innerHTML=altinHTML;
+        document.getElementById("altinList").innerHTML = htmlA;
 
-        let eurTry = usdTry * (1 / dovizData.rates.EUR);
-        let dovizler = [
-            {isim:"Amerikan Doları", alis:usdTry*0.998, satis:usdTry*1.005},
-            {isim:"Euro", alis:eurTry*0.998, satis:eurTry*1.005}
-        ];
+        let htmlD = `
+            <div class="row"><div class="name">Dolar</div><div><span class="buy">${(usdTry*0.998).toFixed(4)}</span><span class="sell">${(usdTry*1.002).toFixed(4)}</span></div></div>
+            <div class="row"><div class="name">Euro</div><div><span class="buy">${(usdTry/dovizData.rates.EUR*0.998).toFixed(4)}</span><span class="sell">${(usdTry/dovizData.rates.EUR*1.002).toFixed(4)}</span></div></div>
+        `;
+        document.getElementById("dovizList").innerHTML = htmlD;
 
-        let dovizHTML="";
-        dovizler.forEach(x=>{
-            dovizHTML+=`
-            <div class="row">
-                <div class="name">${x.isim}</div>
-                <div class="values">
-                    <span class="buy">${x.alis.toFixed(4)}</span>
-                    <span class="sell">${x.satis.toFixed(4)}</span>
-                </div>
-            </div>`;
-        });
-        document.getElementById("dovizList").innerHTML=dovizHTML;
+        document.getElementById("update").innerText = "Son Güncelleme: " + new Date().toLocaleTimeString('tr-TR');
 
-        document.getElementById("update").innerText= "Son Fiyat Güncellemesi: " + new Date().toLocaleString('tr-TR');
-
-    } catch(e) {
-        document.getElementById("update").innerText="Bağlantı kesildi, fiyatlar eski olabilir.";
+    } catch (e) {
+        document.getElementById("update").innerText = "Veri bağlantısı kurulamadı.";
     }
 }
 
-getir();
-setInterval(getir, 30000);
+piyasaVerisi();
+setInterval(piyasaVerisi, 30000);
 </script>
 
 </body>
