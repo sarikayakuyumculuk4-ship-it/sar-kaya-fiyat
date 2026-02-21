@@ -18,51 +18,53 @@
             background: #ffffff;
             background-image: url('https://www.transparenttextures.com/patterns/gold-dust.png');
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* Işıklı Modern Logo */
+        /* Gold Işıklı Tabela */
         header { 
             background: var(--dark); 
-            padding: 50px 20px 30px 20px; 
+            padding: 60px 20px 40px 20px; 
             text-align: center;
             border-bottom: 3px solid var(--gold);
         }
 
         .gold-neon { 
             font-family: 'Cinzel Decorative', cursive;
-            font-size: clamp(28px, 6vw, 60px);
+            font-size: clamp(28px, 6vw, 70px);
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: 8px;
+            letter-spacing: 10px;
             margin: 0;
             text-shadow: var(--gold-glow);
-            animation: pulse 2s infinite alternate;
+            animation: pulse 2.5s infinite alternate;
         }
 
         @keyframes pulse {
             from { text-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold); }
-            to { text-shadow: 0 0 25px #ffcc00, 0 0 45px var(--gold), 0 0 60px #fff; }
+            to { text-shadow: 0 0 25px #ffcc00, 0 0 45px var(--gold), 0 0 70px #fff; }
         }
 
         /* Akan Döviz Bandı */
         .ticker-container {
-            background: rgba(0, 0, 0, 0.9);
+            background: #000;
             border-bottom: 2px solid var(--gold);
             color: var(--gold);
-            padding: 12px 0;
+            padding: 15px 0;
             overflow: hidden;
+            position: relative;
         }
 
         .ticker-move {
             display: flex;
             white-space: nowrap;
-            animation: slide 25s linear infinite;
+            animation: slide 30s linear infinite;
         }
 
         .ticker-item {
-            padding: 0 40px;
-            font-weight: 800;
-            font-size: 20px;
+            padding: 0 50px;
+            font-weight: 900;
+            font-size: 22px;
         }
 
         @keyframes slide {
@@ -70,32 +72,173 @@
             100% { transform: translateX(-100%); }
         }
 
+        .about-text {
+            max-width: 1100px;
+            margin: 30px auto;
+            text-align: center;
+            font-size: 1.3rem;
+            color: #444;
+            padding: 0 20px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
         .container { 
             max-width: 1400px; 
             margin: 40px auto; 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); 
-            gap: 40px; 
+            gap: 50px; 
             padding: 0 20px; 
         }
 
         .card { 
             background: #fff; 
             padding: 40px; 
-            border-radius: 15px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border-top: 6px solid var(--gold);
+            border-radius: 20px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            border-top: 8px solid var(--gold);
         }
 
         .card-title { 
             font-family: 'Cinzel Decorative', serif;
-            font-size: 28px; text-align: center; margin-bottom: 30px; color: var(--dark);
+            font-size: 35px; text-align: center; margin-bottom: 40px; color: var(--dark);
+            border-bottom: 2px solid #f1f1f1; padding-bottom: 20px;
         }
 
         .row { 
-            display: flex; justify-content: space-between; padding: 22px 0; border-bottom: 1px solid #eee; align-items: center;
+            display: flex; justify-content: space-between; padding: 25px 0; border-bottom: 1px solid #f7f7f7; align-items: center;
         }
 
-        .label { font-weight: 900; font-size: 22px; color: #333; }
-        .buy { color: #27ae60; font-weight: 900; font-size: 28px; }
-        .sell { color: #e74c3c; font-weight: 900; font
+        .label { font-weight: 900; font-size: 26px; color: #222; }
+        .buy { color: #27ae60; font-weight: 900; font-size: 34px; }
+        .sell { color: #e74c3c; font-weight: 900; font-size: 34px; margin-left: 25px; }
+
+        footer {
+            background: var(--dark); color: #fff; padding: 70px 20px; text-align: center; margin-top: 50px;
+        }
+
+        .footer-logo { font-family: 'Cinzel Decorative', serif; font-size: 30px; color: var(--gold); margin-bottom: 20px; }
+
+        .update-tag {
+            position: fixed; bottom: 0; width: 100%; background: var(--gold); color: #000;
+            padding: 12px; font-weight: 900; text-align: center; z-index: 9999; font-size: 18px;
+        }
+
+        @media (max-width: 600px) {
+            .container { grid-template-columns: 1fr; }
+            .label { font-size: 20px; }
+            .buy, .sell { font-size: 24px; }
+            .gold-neon { font-size: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 class="gold-neon">SARIKAYA KUYUMCULUK</h1>
+</header>
+
+<div class="ticker-container">
+    <div class="ticker-move" id="tickerContent">PİYASA VERİLERİ YÜKLENİYOR...</div>
+</div>
+
+<div class="about-text">
+    1996 yılında İzmir’in Menemen ilçesinde <strong>SARIKAYA ALTIN TAKI PAZARLAMA TİC. LTD. ŞTİ.</strong> bünyesinde kurulmuştur.
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="card-title">ALTIN BORSASI</div>
+        <div id="altinData">Veriler yükleniyor...</div>
+    </div>
+    <div class="card">
+        <div class="card-title">DÖVİZ KURLARI</div>
+        <div id="dovizData">Veriler yükleniyor...</div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-logo">SARIKAYA</div>
+    <p style="font-size: 20px;">Mithatpaşa Mah. Ertuğrul Cd. No:14 Menemen/İzmir</p>
+    <p style="font-size: 35px; color: var(--gold); font-weight: 900; margin-top: 20px;">(0232) 831 00 55</p>
+</footer>
+
+<div class="update-tag" id="status">CANLI PİYASA BAĞLANTISI KURULUYOR...</div>
+
+<script>
+async function guncelle() {
+    try {
+        // Döviz Verisi
+        const dRes = await fetch("https://open.er-api.com/v6/latest/USD");
+        if (!dRes.ok) throw new Error("Döviz servisi hatası");
+        const dData = await dRes.json();
+        const usdTry = dData.rates.TRY;
+
+        // Ons Altın Verisi
+        const aRes = await fetch("https://api.gold-api.com/price/XAU");
+        if (!aRes.ok) throw new Error("Altın servisi hatası");
+        const aData = await aRes.json();
+        const ons = aData.price;
+
+        /* HAREM ALTIN AYARI (7431 TL SATIŞ HEDEFİ) */
+        let carpan = 1.0315; 
+        let hasGram = (ons / 31.1035) * usdTry * carpan;
+
+        // Altın Listesi
+        const urunler = [
+            {n:"HAS ALTIN", a:hasGram*0.998, s:hasGram*1.002},
+            {n:"22 AYAR", a:hasGram*0.913, s:hasGram*0.930},
+            {n:"ÇEYREK", a:hasGram*1.62, s:hasGram*1.642},
+            {n:"YARIM", a:hasGram*3.24, s:hasGram*3.284},
+            {n:"TAM ALTIN", a:hasGram*6.48, s:hasGram*6.568},
+            {n:"ATA LİRA", a:hasGram*6.68, s:hasGram*6.72}
+        ];
+
+        let aHtml = "";
+        urunler.forEach(u => {
+            aHtml += `<div class="row">
+                <div class="label">${u.n}</div>
+                <div>
+                    <span class="buy">${Math.floor(u.a).toLocaleString('tr-TR')} ₺</span>
+                    <span class="sell">${Math.ceil(u.s).toLocaleString('tr-TR')} ₺</span>
+                </div>
+            </div>`;
+        });
+        document.getElementById("altinData").innerHTML = aHtml;
+
+        // Döviz Listesi
+        let dHtml = "";
+        let tHtml = "";
+        const kurlar = ["USD", "EUR", "GBP", "CHF", "SAR"];
+        kurlar.forEach(c => {
+            let kur = (c === "USD") ? usdTry : usdTry / dData.rates[c];
+            dHtml += `<div class="row">
+                <div class="label">${c}</div>
+                <div>
+                    <span class="buy">${(kur*0.998).toFixed(4)}</span>
+                    <span class="sell">${(kur*1.002).toFixed(4)}</span>
+                </div>
+            </div>`;
+            tHtml += `<span class="ticker-item">${c}: ${(kur*1.002).toFixed(2)} ₺</span> • `;
+        });
+        document.getElementById("dovizData").innerHTML = dHtml;
+        document.getElementById("tickerContent").innerHTML = tHtml + tHtml;
+
+        document.getElementById("status").innerText = "SON GÜNCELLEME: " + new Date().toLocaleTimeString('tr-TR');
+    } catch (e) {
+        console.error(e);
+        document.getElementById("status").innerText = "PİYASA BAĞLANTISI YENİLENİYOR...";
+    }
+}
+
+// İlk çalıştırma
+guncelle();
+
+// 30 saniyede bir güncelle
+setInterval(guncelle, 30000);
+</script>
+
+</body>
+</html>
