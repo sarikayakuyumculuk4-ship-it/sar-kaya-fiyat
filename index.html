@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sarıkaya Kuyumculuk | Canlı Sarrafiye Piyasası</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Montserrat:wght@300;500;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;500;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --gold-primary: #c5a059;
@@ -17,24 +17,23 @@
             margin: 0; 
             font-family: 'Montserrat', sans-serif; 
             background-color: var(--bg-creme);
-            /* Hafif mermer dokusu efekti */
             background-image: url('https://www.transparenttextures.com/patterns/white-marble.png');
             color: var(--text-dark);
             overflow-x: hidden;
         }
 
-        /* Köşe Süsleri - Daha Elit Altın Külçeleri */
+        /* Lüks Altın Külçesi Süsleri */
         .decor-item {
-            position: fixed; pointer-events: none; z-index: 1; opacity: 0.15;
+            position: fixed; pointer-events: none; z-index: 1; opacity: 0.18;
         }
-        .decor-1 { top: -40px; right: -40px; width: 350px; transform: rotate(15deg); }
-        .decor-2 { bottom: -60px; left: -60px; width: 400px; }
+        .decor-1 { top: -40px; right: -40px; width: 380px; transform: rotate(15deg); }
+        .decor-2 { bottom: -60px; left: -60px; width: 420px; }
 
-        /* Üst Akan Döviz Bandı - Modern Altın Şerit */
+        /* Üst Akan Döviz Bandı */
         .ticker-wrap {
             position: fixed; top: 0; width: 100%; z-index: 1000;
             background: linear-gradient(90deg, #b38b47, #e2c275, #b38b47);
-            color: #fff; padding: 12px 0; font-size: 20px; font-weight: 800;
+            color: #fff; padding: 14px 0; font-size: 22px; font-weight: 800;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
@@ -42,89 +41,99 @@
             display: flex; white-space: nowrap; animation: ticker-slide 35s linear infinite;
         }
 
-        .ticker-item { padding: 0 40px; border-right: 1px solid rgba(255,255,255,0.3); }
+        .ticker-item { padding: 0 45px; border-right: 1px solid rgba(255,255,255,0.3); }
 
         @keyframes ticker-slide {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
         }
 
-        /* Kurumsal Header - Modern Işıklı Yazı */
+        /* Kurumsal Header & Slogan */
         header { 
-            background: #fff; padding: 100px 20px 60px 20px; text-align: center;
+            background: #fff; padding: 110px 20px 70px 20px; text-align: center;
             border-bottom: 1px solid #eee; margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
         }
 
         .brand-logo {
             font-family: 'Cinzel', serif;
-            font-size: clamp(35px, 6vw, 80px);
+            font-size: clamp(35px, 6vw, 85px);
             color: var(--gold-primary);
-            letter-spacing: 15px;
+            letter-spacing: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            /* Modern yumuşak altın ışığı */
-            filter: drop-shadow(0 0 8px rgba(197, 160, 89, 0.3));
             margin: 0;
+            filter: drop-shadow(0 0 5px rgba(197, 160, 89, 0.2));
         }
 
-        /* Ana Panel - Özbağ Stili Temiz Tablo */
+        .brand-slogan {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(14px, 2vw, 22px);
+            color: #888;
+            letter-spacing: 6px;
+            font-weight: 300;
+            text-transform: uppercase;
+            margin-top: 15px;
+            display: block;
+        }
+
+        /* Ana Panel */
         .main-container {
-            max-width: 1200px; margin: 0 auto 100px auto; padding: 0 20px;
-            display: grid; grid-template-columns: 1fr; gap: 40px; position: relative; z-index: 10;
+            max-width: 1250px; margin: 0 auto 120px auto; padding: 0 20px;
+            position: relative; z-index: 10;
         }
 
         .price-card {
-            background: #ffffff; border-radius: 4px; padding: 50px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            background: #ffffff; border-radius: 8px; padding: 50px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.04);
             border: 1px solid #efefef;
         }
 
         .card-header {
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 50px; padding-bottom: 20px; border-bottom: 1px solid #f5f5f5;
+            text-align: center; margin-bottom: 50px; padding-bottom: 25px; 
+            border-bottom: 1px solid #f5f5f5;
         }
 
         .card-header h2 {
-            font-family: 'Cinzel', serif; font-size: 32px; color: var(--gold-primary);
-            letter-spacing: 4px; margin: 0;
+            font-family: 'Cinzel', serif; font-size: 34px; color: var(--gold-primary);
+            letter-spacing: 5px; margin: 0;
         }
 
-        /* Tablo Yapısı */
+        /* Tablo Tasarımı */
         .price-table { width: 100%; border-collapse: collapse; }
         .table-head { border-bottom: 2px solid var(--gold-primary); }
-        .table-head th { padding: 20px; text-align: right; color: #999; font-size: 14px; text-transform: uppercase; }
+        .table-head th { padding: 25px; text-align: right; color: #aaa; font-size: 15px; font-weight: 500; }
         .table-head th:first-child { text-align: left; }
 
-        .price-row { border-bottom: 1px solid #f9f9f9; transition: background 0.3s; }
-        .price-row:hover { background: #fdfdfd; }
-        .price-row td { padding: 30px 20px; text-align: right; }
+        .price-row { border-bottom: 1px solid #fcfcfc; transition: all 0.3s; }
+        .price-row:hover { background: #fdfaf5; transform: scale(1.01); }
+        .price-row td { padding: 35px 25px; text-align: right; }
         .price-row td:first-child { text-align: left; }
 
-        .prod-name { font-weight: 800; font-size: 24px; color: #222; }
-        .price-val { font-weight: 800; font-size: 36px; color: var(--text-dark); }
-        .price-val.buy { color: #2c3e50; } /* Alış rengi */
-        .price-val.sell { color: var(--gold-primary); } /* Satış rengi - Kuyumcu odağı */
+        .prod-name { font-weight: 800; font-size: 26px; color: #222; }
+        .price-val { font-weight: 800; font-size: 40px; }
+        .price-val.buy { color: #2c3e50; }
+        .price-val.sell { color: var(--gold-primary); }
 
         /* Alt Bilgi */
         footer {
-            background: #fff; padding: 80px 20px; text-align: center;
+            background: #fff; padding: 100px 20px; text-align: center;
             border-top: 1px solid #eee;
         }
 
-        .footer-info { font-size: 20px; color: #888; line-height: 2; }
-        .footer-tel { font-size: 40px; font-weight: 800; color: var(--gold-primary); margin-top: 20px; }
+        .footer-tel { font-size: 45px; font-weight: 800; color: var(--gold-primary); margin-top: 15px; }
 
         .status-bar {
             position: fixed; bottom: 0; width: 100%; background: #fff;
-            border-top: 1px solid #eee; padding: 15px; font-weight: 600;
-            text-align: center; font-size: 16px; color: #aaa; z-index: 1000;
+            border-top: 1px solid #eee; padding: 18px; font-weight: 600;
+            text-align: center; font-size: 17px; color: #bbb; z-index: 1000;
         }
 
         @media (max-width: 768px) {
-            .brand-logo { font-size: 30px; letter-spacing: 5px; }
-            .price-val { font-size: 24px; }
-            .prod-name { font-size: 18px; }
-            .price-card { padding: 20px; }
+            .brand-logo { font-size: 32px; letter-spacing: 4px; }
+            .brand-slogan { font-size: 12px; letter-spacing: 3px; }
+            .price-val { font-size: 26px; }
+            .price-card { padding: 25px; }
         }
     </style>
 </head>
@@ -134,11 +143,12 @@
 <img src="https://pngimg.com/uploads/gold/gold_PNG11028.png" class="decor-item decor-2">
 
 <div class="ticker-wrap">
-    <div class="ticker-move" id="tickerBox">DÖVİZ KURLARI YÜKLENİYOR...</div>
+    <div class="ticker-move" id="tickerBox">CANLI KURLAR YÜKLENİYOR...</div>
 </div>
 
 <header>
     <h1 class="brand-logo">SARIKAYA KUYUMCULUK</h1>
+    <span class="brand-slogan">1996'dan Günümüze Güven ve İstikrarla</span>
 </header>
 
 <div class="main-container">
@@ -149,26 +159,22 @@
         <table class="price-table">
             <thead class="table-head">
                 <tr>
-                    <th>ÜRÜN ADI</th>
+                    <th>ÜRÜN</th>
                     <th>ALIŞ (TL)</th>
                     <th>SATIŞ (TL)</th>
                 </tr>
             </thead>
-            <tbody id="goldRows">
-                </tbody>
+            <tbody id="goldRows"></tbody>
         </table>
     </div>
 </div>
 
 <footer>
-    <div class="footer-info">
-        Mithatpaşa Mah. Ertuğrul Cd. No:14 Menemen/İzmir<br>
-        1996'dan Günümüze Güven ve İstikrarla.
-    </div>
+    <div style="font-size: 20px; color: #999;">Mithatpaşa Mah. Ertuğrul Cd. No:14 Menemen/İzmir</div>
     <div class="footer-tel">(0232) 831 00 55</div>
 </footer>
 
-<div class="status-bar" id="updateStatus">Veriler senkronize ediliyor...</div>
+<div class="status-bar" id="updateStatus">Sistem aktif...</div>
 
 <script>
 async function piyasaGuncelle() {
@@ -181,17 +187,17 @@ async function piyasaGuncelle() {
         const aData = await aRes.json();
         const ons = aData.price;
 
-        // Özbağ/Harem Hedefi (7433 TL civarı) için çarpan
+        // Hedeflenen Harem/Özbağ kur farkı çarpanı
         let carpan = 1.0322; 
         let hasGram = (ons / 31.1035) * usdTry * carpan;
 
         const altınlar = [
-            {n:"HAS ALTIN (24K)", a:hasGram*0.998, s:hasGram*1.002},
-            {n:"22 AYAR ALTIN", a:hasGram*0.913, s:hasGram*0.930},
-            {n:"ÇEYREK ALTIN", a:hasGram*1.62, s:hasGram*1.643},
-            {n:"YARIM ALTIN", a:hasGram*3.24, s:hasGram*3.286},
-            {n:"TAM ALTIN", a:hasGram*6.48, s:hasGram*6.572},
-            {n:"ATA LİRA", a:hasGram*6.685, s:hasGram*6.725}
+            {n:"HAS ALTIN (24K)", a:hasGram*0.9985, s:hasGram*1.0015},
+            {n:"22 AYAR ALTIN", a:hasGram*0.913, s:hasGram*0.931},
+            {n:"ÇEYREK ALTIN", a:hasGram*1.62, s:hasGram*1.644},
+            {n:"YARIM ALTIN", a:hasGram*3.24, s:hasGram*3.288},
+            {n:"TAM ALTIN", a:hasGram*6.48, s:hasGram*6.576},
+            {n:"ATA LİRA", a:hasGram*6.685, s:hasGram*6.728}
         ];
 
         let gHtml = "";
@@ -205,7 +211,6 @@ async function piyasaGuncelle() {
         });
         document.getElementById("goldRows").innerHTML = gHtml;
 
-        // Üst Akan Bant Dövizleri
         let tHtml = "";
         const kurlar = ["USD", "EUR", "GBP", "CHF", "SAR", "AED"];
         kurlar.forEach(c => {
@@ -216,7 +221,7 @@ async function piyasaGuncelle() {
 
         document.getElementById("updateStatus").innerText = "SON GÜNCELLEME: " + new Date().toLocaleTimeString('tr-TR');
     } catch (e) {
-        document.getElementById("updateStatus").innerText = "SİSTEM BAĞLANTISI BEKLENİYOR...";
+        document.getElementById("updateStatus").innerText = "SİSTEM BAĞLANTISI KONTROL EDİLİYOR...";
     }
 }
 
