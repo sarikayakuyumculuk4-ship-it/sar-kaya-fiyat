@@ -1,97 +1,57 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sarıkaya Kuyumculuk</title>
-
-<style>
-body { margin:0; font-family:Arial; background:white; }
-header { text-align:center; padding:30px 10px 10px; }
-h1 { color:gold; font-size:40px; margin:0; }
-.marquee { background:#f5f5f5; padding:8px; font-weight:bold; }
-.container { max-width:900px; margin:30px auto; }
-.card {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#fafafa;
-  padding:15px;
-  margin-bottom:15px;
-  border-radius:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-.price { text-align:right; }
-.footer {
-  text-align:center;
-  margin-top:40px;
-  padding:20px;
-  background:#f5f5f5;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>Sarı Kaya Kuyumculuk - Canlı Fiyatlar</title>
+    <style>
+        body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; }
+        table { margin: 50px auto; border-collapse: collapse; width: 80%; max-width: 600px; background: #333; }
+        th, td { padding: 15px; border: 1px solid #444; font-size: 1.2rem; }
+        th { background: #d4af37; color: black; }
+        .fiyat { color: #00ff00; font-weight: bold; }
+        .baslik { color: #d4af37; margin-top: 30px; }
+    </style>
 </head>
-
 <body>
 
-<header>
-<h1>SARIKAYA KUYUMCULUK</h1>
-</header>
+    <h1 class="baslik">Sarı Kaya Kuyumculuk</h1>
+    <p>Canlı Altın Fiyatları (Anlık Güncellenir)</p>
 
-<div class="marquee">
-<marquee id="doviz">Yükleniyor...</marquee>
-</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Cins</th>
+                <th>Alış (TL)</th>
+                <th>Satış (TL)</th>
+            </tr>
+        </thead>
+        <tbody id="fiyat-tablosu">
+            <tr><td colspan="3">Yükleniyor...</td></tr>
+        </tbody>
+    </table>
 
-<div class="container" id="liste"></div>
+    <script>
+        async function fiyatlariGetir() {
+            try {
+                const response = await fetch('/api/fiyatlar');
+                const data = await response.json();
+                
+                const tablo = document.getElementById('fiyat-tablosu');
+                tablo.innerHTML = `
+                    <tr><td>Has Altın</td><td colspan="2" class="fiyat">${data.hasAltin} TL</td></tr>
+                    <tr><td>22 Ayar</td><td class="fiyat">${data.ayar22.alis}</td><td class="fiyat">${data.ayar22.satis}</td></tr>
+                    <tr><td>Çeyrek Altın</td><td class="fiyat">${data.ceyrek.alis}</td><td class="fiyat">${data.ceyrek.satis}</td></tr>
+                    <tr><td>Yarım Altın</td><td class="fiyat">${data.yarim.alis}</td><td class="fiyat">${data.yarim.satis}</td></tr>
+                    <tr><td>Tam Altın</td><td class="fiyat">${data.tam.alis}</td><td class="fiyat">${data.tam.satis}</td></tr>
+                    <tr><td>Ata Lira</td><td class="fiyat">${data.ata.alis}</td><td class="fiyat">${data.ata.satis}</td></tr>
+                `;
+            } catch (e) {
+                console.error("Hata:", e);
+            }
+        }
 
-<div class="footer">
-<b>Adres:</b> Mithatpaşa Mahallesi, Ertuğrul Cd. No:14, 35660 Menemen/İzmir<br>
-<b>Telefon:</b> (0232) 831 00 55
-</div>
-
-<script>
-async function getir() {
-  try {
-    const res = await fetch("https://sarikaya-backend-1.onrender.com/api/fiyatlar");
-    const data = await res.json();
-
-    document.getElementById("doviz").innerHTML =
-      "USD: " + data.doviz.USD + " ₺ | " +
-      "EUR: " + data.doviz.EUR + " ₺ | " +
-      "GBP: " + data.doviz.GBP + " ₺ | " +
-      "CHF: " + data.doviz.CHF + " ₺";
-
-    const urunler = [
-      { ad:"Gram Altın", veri:data.gram },
-      { ad:"Has Altın", veri:data.hasAltin },
-      { ad:"Çeyrek Altın", veri:data.ceyrek },
-      { ad:"Yarım Altın", veri:data.yarim },
-      { ad:"Cumhuriyet", veri:data.cumhuriyet },
-      { ad:"Ata Lira", veri:data.ata }
-    ];
-
-    const liste = document.getElementById("liste");
-    liste.innerHTML = "";
-
-    urunler.forEach(u => {
-      liste.innerHTML += `
-        <div class="card">
-          <div><b>${u.ad}</b></div>
-          <div class="price">
-            <div>Alış: ${u.veri.alis} ₺</div>
-            <div>Satış: ${u.veri.satis} ₺</div>
-          </div>
-        </div>
-      `;
-    });
-
-  } catch {
-    document.getElementById("liste").innerHTML = "Veri alınamadı";
-  }
-}
-
-getir();
-setInterval(getir, 30000);
-</script>
-
+        fiyatlariGetir();
+        setInterval(fiyatlariGetir, 30000); // 30 saniyede bir güncelle
+    </script>
 </body>
 </html>
