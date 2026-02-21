@@ -3,105 +3,162 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sarıkaya Kuyumculuk</title>
+<title>Sarıkaya Kuyumculuk • Fiyatlar</title>
 
 <style>
-body{
-    font-family: Arial, sans-serif;
-    background:#f4f4f4;
-    text-align:center;
+body {
     margin:0;
     padding:0;
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    color: #222;
+    text-align:center;
 }
 
-h1{
+header {
     background:#111;
     color:white;
-    padding:20px;
-    margin:0;
-}
-
-.container{
-    margin-top:30px;
-}
-
-.card{
-    background:white;
-    margin:15px auto;
-    padding:20px;
-    width:300px;
-    border-radius:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
-.price{
+    padding:18px;
     font-size:24px;
+    font-weight:bold;
+}
+
+.container {
+    width:90%;
+    max-width:800px;
+    margin:20px auto;
+}
+
+.card {
+    background:#fff;
+    border-radius:10px;
+    padding:15px 20px;
+    margin:10px 0;
+    box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+.card h3 {
+    margin:6px 0;
+    color:#444;
+}
+
+.price {
+    font-size:22px;
     font-weight:bold;
     color:#c59d00;
 }
 
-.update{
-    margin-top:20px;
-    color:gray;
+.update {
     font-size:14px;
+    margin:14px 0;
+    color:#555;
 }
 </style>
 </head>
 
 <body>
 
-<h1>SARIKAYA KUYUMCULUK</h1>
+<header>Sarıkaya Kuyumculuk</header>
 
 <div class="container">
-
     <div class="card">
-        <h3>Has Altın</h3>
-        <div class="price" id="hasAltin">Yükleniyor...</div>
+        <h3>USD / TRY</h3>
+        <div class="price" id="usd">Yükleniyor...</div>
     </div>
 
     <div class="card">
-        <h3>22 Ayar Alış</h3>
-        <div class="price" id="ayar22Alis">Yükleniyor...</div>
+        <h3>EUR / TRY</h3>
+        <div class="price" id="eur">Yükleniyor...</div>
     </div>
 
     <div class="card">
-        <h3>22 Ayar Satış</h3>
-        <div class="price" id="ayar22Satis">Yükleniyor...</div>
+        <h3>Gram Altın</h3>
+        <div class="price" id="gramAltin">Yükleniyor...</div>
     </div>
 
+    <div class="card">
+        <h3>22 Ayar</h3>
+        <div class="price" id="ayar22">Yükleniyor...</div>
+    </div>
+
+    <div class="card">
+        <h3>Çeyrek Altın</h3>
+        <div class="price" id="ceyrek">Yükleniyor...</div>
+    </div>
+
+    <div class="card">
+        <h3>Yarım Altın</h3>
+        <div class="price" id="yarim">Yükleniyor...</div>
+    </div>
+
+    <div class="card">
+        <h3>Tam Altın</h3>
+        <div class="price" id="tam">Yükleniyor...</div>
+    </div>
+
+    <div class="card">
+        <h3>Ata Altını</h3>
+        <div class="price" id="ata">Yükleniyor...</div>
+    </div>
 </div>
 
-<div class="update" id="updateTime"></div>
+<div class="update" id="update"></div>
 
 <script>
 
-async function fiyatGetir(){
+// Katsayılar
+const katsayi = {
+    ceyrek: 1.63,
+    yarim: 3.27,
+    tam: 6.50,
+    ata: 6.70,
+    ayar22Alis: 0.913,
+    ayar22Satis: 0.930
+};
 
-    try{
-        // Harem Altın API (Has Altın için)
-        const response = await fetch("https://api.haremaltin.com/v1/quote?symbol=HASALTIN");
-        const data = await response.json();
+async function guncelle() {
+    try {
 
-        let has = data.ask; // has satış fiyatı
+        // Döviz verisi
+        const dovizRes = await fetch("https://api.exchangerate.host/latest?base=TRY&symbols=USD,EUR");
+        const dovizData = await dovizRes.json();
 
-        // 22 ayar hesaplama
-        let ayar22Alis = has * 0.913;
-        let ayar22Satis = has * 0.930;
+        const usd = (1 / dovizData.rates.USD).toFixed(4);
+        const eur = (1 / dovizData.rates.EUR).toFixed(4);
 
-        document.getElementById("hasAltin").innerText = has.toFixed(2) + " ₺";
-        document.getElementById("ayar22Alis").innerText = ayar22Alis.toFixed(2) + " ₺";
-        document.getElementById("ayar22Satis").innerText = ayar22Satis.toFixed(2) + " ₺";
+        document.getElementById("usd").innerText = usd + " ₺";
+        document.getElementById("eur").innerText = eur + " ₺";
 
-        document.getElementById("updateTime").innerText = 
-            "Son Güncelleme: " + new Date().toLocaleString();
+        // Altın (XAU/TRY)
+        const altinRes = await fetch("https://api.exchangerate.host/latest?base=TRY&symbols=XAU");
+        const altinData = await altinRes.json();
 
-    }catch(error){
-        document.getElementById("hasAltin").innerText = "Veri alınamadı";
+        const gramAltin = (1 / altinData.rates.XAU).toFixed(2);
+
+        document.getElementById("gramAltin").innerText = gramAltin + " ₺";
+
+        // Altın hesaplamalar
+        const has = parseFloat(gramAltin);
+
+        const ayar22Alis = (has*katsayi.ayar22Alis).toFixed(2);
+        const ayar22Satis = (has*katsayi.ayar22Satis).toFixed(2);
+
+        document.getElementById("ayar22").innerText = ayar22Alis + " / " + ayar22Satis + " ₺";
+        document.getElementById("ceyrek").innerText = (has*katsayi.ceyrek).toFixed(2) + " ₺";
+        document.getElementById("yarim").innerText = (has*katsayi.yarim).toFixed(2) + " ₺";
+        document.getElementById("tam").innerText = (has*katsayi.tam).toFixed(2) + " ₺";
+        document.getElementById("ata").innerText = (has*katsayi.ata).toFixed(2) + " ₺";
+
+        document.getElementById("update").innerText = "Son Güncelleme: " + new Date().toLocaleString();
+
+    } catch(err) {
+        console.error("Veri çekilemedi", err);
+        document.getElementById("update").innerText = "Veri ulaşılamadı.";
     }
 }
 
-fiyatGetir();
-setInterval(fiyatGetir, 60000);
+guncelle();
+setInterval(guncelle, 60000);
 
 </script>
 
