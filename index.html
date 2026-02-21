@@ -82,7 +82,7 @@
     </div>
 </div>
 
-<div class="status-bar" id="updateStatus">Bağlantı başarılı.</div>
+<div class="status-bar" id="updateStatus">Fiyatlar senkronize ediliyor...</div>
 
 <script>
 async function piyasaGuncelle() {
@@ -95,7 +95,7 @@ async function piyasaGuncelle() {
         const aData = await aRes.json();
         const ons = aData.price;
 
-        // Has Altın Alış: 7389 TL
+        // Has Altın Alış: 7389 TL (Referans Değer)
         let hasAlis = 7389; 
         let hasSatis = hasAlis + 44; 
 
@@ -106,8 +106,8 @@ async function piyasaGuncelle() {
             {n:"ÇEYREK ALTIN", a:hasAlis * 1.62, s:hasAlis * 1.648},
             {n:"YARIM ALTIN", a:hasAlis * 3.24, s:hasAlis * 3.296},
             {n:"TAM ALTIN", a:hasAlis * 6.48, s:hasAlis * 6.592},
-            // Ata Lira katsayısı piyasa farkını kapatmak için 6.74'e çekildi
-            {n:"ATA LİRA", a:hasAlis * 6.69, s:hasAlis * 6.745} 
+            // Ata Alış sabit katsayı, Satış ise katsayı + 200 TL olarak ayarlandı
+            {n:"ATA LİRA", a:hasAlis * 6.685, s:(hasAlis * 6.728) + 200} 
         ];
 
         let gHtml = "";
@@ -131,7 +131,7 @@ async function piyasaGuncelle() {
 
         document.getElementById("updateStatus").innerText = "SON GÜNCELLEME: " + new Date().toLocaleTimeString('tr-TR');
     } catch (e) {
-        document.getElementById("updateStatus").innerText = "GÜNCELLEME BEKLENİYOR...";
+        document.getElementById("updateStatus").innerText = "BAĞLANTI HATASI. YENİLENİYOR...";
     }
 }
 
