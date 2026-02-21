@@ -1,141 +1,86 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sarıkaya Kuyumculuk</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f2f2f2;}
-header{background:#111;color:#fff;padding:18px;text-align:center;font-size:22px;font-weight:bold;}
-.container{max-width:1100px;margin:20px auto;display:flex;gap:20px;}
-.box{flex:1;background:#fff;padding:15px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
-.title{font-weight:bold;margin-bottom:10px;font-size:18px;}
-.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;}
-.buy{color:green;font-weight:bold;}
-.sell{color:red;font-weight:bold;}
-.update{text-align:center;margin-top:15px;font-size:14px;color:#555;}
-</style>
-</head>
-<body>
-
-<header>Sarıkaya Kuyumculuk</header>
-
-<div class="container">
-
-<div class="box">
-<div class="title">Altın Fiyatları</div>
-<div id="altinList"></div>
-</div>
-
-<div class="box">
-<div class="title">Döviz Fiyatları</div>
-<div id="dovizList"></div>
-</div>
-
-</div>
-
-<div class="update" id="update"></div>
-
-<script>
-
-async function getir(){
-
-try{
-
-// USD/TRY
-let dovizRes = await fetch("https://open.er-api.com/v6/latest/USD");
-let dovizData = await dovizRes.json();
-let usdTry = dovizData.rates.TRY;
-
-// ONS ALTIN USD
-let altinRes = await fetch("https://api.gold-api.com/price/XAU");
-let altinData = await altinRes.json();
-let onsUSD = altinData.price;
-
-// HAS ALTIN (gram) hesaplama
-let has = (onsUSD / 31.10) * usdTry;
-
-// Spread veriyoruz (küçük fark)
-let hasAlis = has * 0.998;
-let hasSatis = has * 1.002;
-
-// ALTIN ÇARPANLAR
-let altinlar = [
-{isim:"HAS ALTIN", alis:hasAlis, satis:hasSatis},
-
-{isim:"22 AYAR",
-alis:hasAlis * 0.913,
-satis:hasSatis * 0.930},
-
-{isim:"ÇEYREK",
-alis:hasAlis * 1.62,
-satis:hasSatis * 1.64},
-
-{isim:"YARIM",
-alis:hasAlis * 3.24,
-satis:hasSatis * 3.27},
-
-{isim:"TAM",
-alis:hasAlis * 6.46,
-satis:hasSatis * 6.52},
-
-{isim:"ATA",
-alis:hasAlis * 6.68,
-satis:hasSatis * 6.71},
-];
-
-let altinHTML="";
-altinlar.forEach(x=>{
-altinHTML+=`
-<div class="row">
-<div>${x.isim}</div>
-<div>
-<span class="buy">${x.alis.toFixed(2)} ₺</span>
- /
-<span class="sell">${x.satis.toFixed(2)} ₺</span>
-</div>
-</div>
-`;
-});
-document.getElementById("altinList").innerHTML=altinHTML;
-
-
-// DÖVİZ SPREAD
-let eurTry = usdTry / dovizData.rates.EUR;
-
-let dovizler = [
-{isim:"USD / TRY", alis:usdTry*0.998, satis:usdTry*1.002},
-{isim:"EUR / TRY", alis:eurTry*0.998, satis:eurTry*1.002}
-];
-
-let dovizHTML="";
-dovizler.forEach(x=>{
-dovizHTML+=`
-<div class="row">
-<div>${x.isim}</div>
-<div>
-<span class="buy">${x.alis.toFixed(4)}</span>
- /
-<span class="sell">${x.satis.toFixed(4)}</span>
-</div>
-</div>
-`;
-});
-document.getElementById("dovizList").innerHTML=dovizHTML;
-
-document.getElementById("update").innerText=
-"Son Güncelleme: "+new Date().toLocaleString();
-
-}catch(e){
-document.getElementById("update").innerText="Veri alınamadı.";
+body {
+  margin:0;
+  background:black;
+  color:white;
+  font-family:Arial;
 }
 
+h1 {
+  text-align:center;
+  padding:20px;
+  font-size:40px;
+  background:gold;
+  color:black;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:28px;
+}
+
+th, td {
+  padding:20px;
+  text-align:center;
+  border-bottom:1px solid #333;
+}
+
+th {
+  background:#111;
+  color:gold;
+}
+
+.al {
+  color:#00ff00;
+}
+
+.sat {
+  color:#ff4444;
+}
+</style>
+</head>
+
+<body>
+
+<h1>SARIKAYA KUYUMCULUK</h1>
+
+<table>
+<thead>
+<tr>
+<th>ÜRÜN</th>
+<th>ALIŞ</th>
+<th>SATIŞ</th>
+</tr>
+</thead>
+<tbody id="fiyatlar"></tbody>
+</table>
+
+<script>
+async function getir() {
+  const res = await fetch("https://sarikaya-backend-1.onrender.com/altin");
+  const data = await res.json();
+
+  const tablo = `
+  <tr><td>HAS ALTIN</td><td class="al">${data.hasAlis}</td><td class="sat">${data.hasSatis}</td></tr>
+  <tr><td>ÇEYREK</td><td class="al">${data.ceyrekAlis}</td><td class="sat">${data.ceyrekSatis}</td></tr>
+  <tr><td>YARIM</td><td class="al">${data.yarimAlis}</td><td class="sat">${data.yarimSatis}</td></tr>
+  <tr><td>TAM</td><td class="al">${data.tamAlis}</td><td class="sat">${data.tamSatis}</td></tr>
+  <tr><td>ATA</td><td class="al">${data.ataAlis}</td><td class="sat">${data.ataSatis}</td></tr>
+  <tr><td>22 AYAR</td><td class="al">${data.ayar22Alis}</td><td class="sat">${data.ayar22Satis}</td></tr>
+  `;
+
+  document.getElementById("fiyatlar").innerHTML = tablo;
 }
 
 getir();
-setInterval(getir,60000);
-
+setInterval(getir, 10000);
 </script>
 
 </body>
