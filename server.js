@@ -5,7 +5,7 @@ const path = require('path');
 
 app.use(express.static('public'));
 
-// Katsayıların
+// Senin verdiğin katsayılar
 const katsayilar = {
     ceyrek: { alis: 1.62, satis: 1.64 },
     yarim: { alis: 3.24, satis: 3.27 },
@@ -16,32 +16,30 @@ const katsayilar = {
 
 app.get('/api/fiyatlar', async (req, res) => {
     try {
-        // Has Altın fiyatını alıyoruz (Örnek API kullanımı)
-        // Not: Gerçek Harem Altın API anahtarın varsa URL'yi güncelleyebilirsin
-        const response = await axios.get('https://api.collectapi.com/economy/goldPrice', {
-            headers: { 'authorization': 'apikey YOUR_API_KEY_HERE' } // Buraya kendi API key'ini almalısın
-        });
+        // Ücretsiz ve direkt erişilebilir has altın fiyatı (Genelde 24 Ayar baz alınır)
+        const goldApi = await axios.get('https://api.bigpara.hurriyet.com.tr/doviz/headerlist/anasayfa');
         
-        // Eğer API yoksa simülasyon için baz fiyat (Örn: 2500 TL)
-        const hasAltin = response.data.result ? parseFloat(response.data.result[0].buying) : 2500;
+        // Gelen veriden "Altın (Gram)" değerini buluyoruz
+        const altinVerisi = goldApi.data.Data.find(x => x.SEMBOL == "GA");
+        const hasAltin = parseFloat(altinVerisi.SATIS.replace(',', '.'));
 
         const hesaplananFiyatlar = {
             hasAltin: hasAltin,
             ceyrek: { 
-                alis: (hasAltin * katsayilar.ceyrek.alis).toFixed(2), 
-                satis: (hasAltin * katsayilar.ceyrek.satis).toFixed(2) 
+                alis: Math.floor(hasAltin * katsayilar.ceyrek.alis), 
+                satis: Math.ceil(hasAltin * katsayilar.ceyrek.satis) 
             },
             yarim: { 
-                alis: (hasAltin * katsayilar.yarim.alis).toFixed(2), 
-                satis: (hasAltin * katsayilar.yarim.satis).toFixed(2) 
+                alis: Math.floor(hasAltin * katsayilar.yarim.alis), 
+                satis: Math.ceil(hasAltin * katsayilar.yarim.satis) 
             },
             tam: { 
-                alis: (hasAltin * katsayilar.tam.alis).toFixed(2), 
-                satis: (hasAltin * katsayilar.tam.satis).toFixed(2) 
+                alis: Math.floor(hasAltin * katsayilar.tam.alis), 
+                satis: Math.ceil(hasAltin * katsayilar.tam.satis) 
             },
             ata: { 
-                alis: (hasAltin * katsayilar.ata.alis).toFixed(2), 
-                satis: (hasAltin * katsayilar.ata.satis).toFixed(2) 
+                alis: Math.floor(hasAltin * katsayilar.ata.alis), 
+                satis: Math.ceil(hasAltin * katsayilar.ata.satis) 
             },
             ayar22: { 
                 alis: (hasAltin * katsayilar.ayar22.alis).toFixed(2), 
@@ -51,9 +49,10 @@ app.get('/api/fiyatlar', async (req, res) => {
 
         res.json(hesaplananFiyatlar);
     } catch (error) {
-        res.status(500).json({ error: "Veri çekilemedi" });
+        console.error("Fiyat çekme hatası:", error);
+        res.status(500).json({ error: "Fiyatlar şu an alınamıyor." });
     }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server ${PORT} üzerinde çalışıyor`));
+app.listen(PORT, () => console.log(`Site http://localhost:${PORT} adresinde yayında`));
