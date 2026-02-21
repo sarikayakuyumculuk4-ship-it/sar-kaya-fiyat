@@ -1,141 +1,152 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sarıkaya Kuyumculuk</title>
-
-<style>
-body{margin:0;font-family:Arial;background:#f2f2f2;}
-header{background:#111;color:#fff;padding:18px;text-align:center;font-size:22px;font-weight:bold;}
-.container{max-width:1100px;margin:20px auto;display:flex;gap:20px;}
-.box{flex:1;background:#fff;padding:15px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
-.title{font-weight:bold;margin-bottom:10px;font-size:18px;}
-.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;}
-.buy{color:green;font-weight:bold;}
-.sell{color:red;font-weight:bold;}
-.update{text-align:center;margin-top:15px;font-size:14px;color:#555;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarıkaya Kuyumculuk | Canlı Piyasalar</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark: #0f0f0f;
+            --card: #1a1a1a;
+            --text: #ffffff;
+        }
+        body { margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--dark); color: var(--text); }
+        header { 
+            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); 
+            color: var(--gold); 
+            padding: 25px; 
+            text-align: center; 
+            font-size: 28px; 
+            font-weight: bold; 
+            border-bottom: 2px solid var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        .container { max-width: 1200px; margin: 30px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; padding: 0 15px; }
+        .box { 
+            background: var(--card); 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+        .box:hover { border-color: var(--gold); transform: translateY(-5px); }
+        .title { 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+            font-size: 20px; 
+            color: var(--gold); 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #222; align-items: center; }
+        .row:last-child { border-bottom: none; }
+        .name { font-weight: 500; font-size: 16px; }
+        .values { text-align: right; }
+        .buy { color: #00ff88; font-weight: bold; margin-right: 10px; font-family: 'Courier New', Courier, monospace; }
+        .sell { color: #ff4d4d; font-weight: bold; font-family: 'Courier New', Courier, monospace; }
+        .unit { font-size: 11px; color: #888; margin-bottom: 5px; }
+        .update { text-align: center; margin-top: 30px; font-size: 13px; color: #888; padding-bottom: 30px; }
+        
+        /* Mobil Uyumluluk */
+        @media (max-width: 600px) {
+            .container { grid-template-columns: 1fr; }
+            header { font-size: 20px; }
+        }
+    </style>
 </head>
 <body>
 
 <header>Sarıkaya Kuyumculuk</header>
 
 <div class="container">
+    <div class="box">
+        <div class="title"><span>Altın Fiyatları</span> <span style="font-size: 12px; color: #888;">ALIŞ / SATIŞ</span></div>
+        <div id="altinList"></div>
+    </div>
 
-<div class="box">
-<div class="title">Altın Fiyatları</div>
-<div id="altinList"></div>
+    <div class="box">
+        <div class="title"><span>Döviz Fiyatları</span> <span style="font-size: 12px; color: #888;">ALIŞ / SATIŞ</span></div>
+        <div id="dovizList"></div>
+    </div>
 </div>
 
-<div class="box">
-<div class="title">Döviz Fiyatları</div>
-<div id="dovizList"></div>
-</div>
-
-</div>
-
-<div class="update" id="update"></div>
+<div class="update" id="update">Veriler yükleniyor...</div>
 
 <script>
-
 async function getir(){
+    try {
+        // Döviz verisi (USD/TRY)
+        let dovizRes = await fetch("https://open.er-api.com/v6/latest/USD");
+        let dovizData = await dovizRes.json();
+        let usdTry = dovizData.rates.TRY;
 
-try{
+        // ONS Altın verisi
+        let altinRes = await fetch("https://api.gold-api.com/price/XAU");
+        let altinData = await altinRes.json();
+        let onsUSD = altinData.price;
 
-// USD/TRY
-let dovizRes = await fetch("https://open.er-api.com/v6/latest/USD");
-let dovizData = await dovizRes.json();
-let usdTry = dovizData.rates.TRY;
+        /* HAS ALTIN DÜZELTMESİ: 
+           Global ONS fiyatı ile Türkiye fiziki piyasası arasında fark olur. 
+           Buraya 1.015 gibi bir çarpan ekleyerek (Türkiye primi) Harem Altın seviyelerine çekiyoruz.
+        */
+        let turkiyePrimi = 1.025; // Eğer fiyat hala düşükse 1.025'i artırabilirsin
+        let hasBase = (onsUSD / 31.1035) * usdTry * turkiyePrimi;
 
-// ONS ALTIN USD
-let altinRes = await fetch("https://api.gold-api.com/price/XAU");
-let altinData = await altinRes.json();
-let onsUSD = altinData.price;
+        let altinlar = [
+            {isim:"HAS ALTIN", alis:hasBase * 0.998, satis:hasBase * 1.002},
+            {isim:"22 AYAR", alis:hasBase * 0.913, satis:hasBase * 0.930},
+            {isim:"ÇEYREK ALTIN", alis:hasBase * 1.62, satis:hasBase * 1.64},
+            {isim:"YARIM ALTIN", alis:hasBase * 3.24, satis:hasBase * 3.27},
+            {isim:"TAM ALTIN", alis:hasBase * 6.46, satis:hasBase * 6.52},
+            {isim:"ATA LİRA", alis:hasBase * 6.68, satis:hasBase * 6.715}
+        ];
 
-// HAS ALTIN (gram) hesaplama
-let has = (onsUSD / 31.10) * usdTry;
+        let altinHTML="";
+        altinlar.forEach(x=>{
+            altinHTML+=`
+            <div class="row">
+                <div class="name">${x.isim}</div>
+                <div class="values">
+                    <span class="buy">${x.alis.toFixed(2)} ₺</span>
+                    <span class="sell">${x.satis.toFixed(2)} ₺</span>
+                </div>
+            </div>`;
+        });
+        document.getElementById("altinList").innerHTML=altinHTML;
 
-// Spread veriyoruz (küçük fark)
-let hasAlis = has * 0.998;
-let hasSatis = has * 1.002;
+        // DÖVİZ HESAPLAMA
+        let eurTry = usdTry * (1 / dovizData.rates.EUR);
+        let dovizler = [
+            {isim:"DOLAR (USD)", alis:usdTry*0.999, satis:usdTry*1.005},
+            {isim:"EURO (EUR)", alis:eurTry*0.999, satis:eurTry*1.005}
+        ];
 
-// ALTIN ÇARPANLAR
-let altinlar = [
-{isim:"HAS ALTIN", alis:hasAlis, satis:hasSatis},
+        let dovizHTML="";
+        dovizler.forEach(x=>{
+            dovizHTML+=`
+            <div class="row">
+                <div class="name">${x.isim}</div>
+                <div class="values">
+                    <span class="buy">${x.alis.toFixed(4)}</span>
+                    <span class="sell">${x.satis.toFixed(4)}</span>
+                </div>
+            </div>`;
+        });
+        document.getElementById("dovizList").innerHTML=dovizHTML;
 
-{isim:"22 AYAR",
-alis:hasAlis * 0.913,
-satis:hasSatis * 0.930},
+        document.getElementById("update").innerText= "Son Güncelleme: " + new Date().toLocaleString('tr-TR');
 
-{isim:"ÇEYREK",
-alis:hasAlis * 1.62,
-satis:hasSatis * 1.64},
-
-{isim:"YARIM",
-alis:hasAlis * 3.24,
-satis:hasSatis * 3.27},
-
-{isim:"TAM",
-alis:hasAlis * 6.46,
-satis:hasSatis * 6.52},
-
-{isim:"ATA",
-alis:hasAlis * 6.68,
-satis:hasSatis * 6.71},
-];
-
-let altinHTML="";
-altinlar.forEach(x=>{
-altinHTML+=`
-<div class="row">
-<div>${x.isim}</div>
-<div>
-<span class="buy">${x.alis.toFixed(2)} ₺</span>
- /
-<span class="sell">${x.satis.toFixed(2)} ₺</span>
-</div>
-</div>
-`;
-});
-document.getElementById("altinList").innerHTML=altinHTML;
-
-
-// DÖVİZ SPREAD
-let eurTry = usdTry / dovizData.rates.EUR;
-
-let dovizler = [
-{isim:"USD / TRY", alis:usdTry*0.998, satis:usdTry*1.002},
-{isim:"EUR / TRY", alis:eurTry*0.998, satis:eurTry*1.002}
-];
-
-let dovizHTML="";
-dovizler.forEach(x=>{
-dovizHTML+=`
-<div class="row">
-<div>${x.isim}</div>
-<div>
-<span class="buy">${x.alis.toFixed(4)}</span>
- /
-<span class="sell">${x.satis.toFixed(4)}</span>
-</div>
-</div>
-`;
-});
-document.getElementById("dovizList").innerHTML=dovizHTML;
-
-document.getElementById("update").innerText=
-"Son Güncelleme: "+new Date().toLocaleString();
-
-}catch(e){
-document.getElementById("update").innerText="Veri alınamadı.";
-}
-
+    } catch(e) {
+        document.getElementById("update").innerText="Bağlantı hatası, veriler güncellenemedi.";
+    }
 }
 
 getir();
-setInterval(getir,60000);
-
+setInterval(getir, 30000); // 30 saniyede bir güncelle
 </script>
 
 </body>
