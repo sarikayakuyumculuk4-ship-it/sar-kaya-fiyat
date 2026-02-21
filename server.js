@@ -1,26 +1,11 @@
-import express from "express";
-import fetch from "node-fetch";
-import * as cheerio from "cheerio";
-import cors from "cors";
-
-const app = express();
-app.use(cors());
-
-const PORT = process.env.PORT || 3000;
-
-app.get("/", (req, res) => {
-  res.send("Sarikaya Altın Backend Çalışıyor");
-});
-
 app.get("/altin", async (req, res) => {
   try {
-    const response = await fetch("https://www.haremaltin.com/");
-    const html = await response.text();
-    const $ = cheerio.load(html);
+    const response = await fetch("https://www.haremaltin.com/api/altin-fiyatlari");
+    const data = await response.json();
 
-    // ŞİMDİLİK SABİT TEST DEĞERİ (Sonra gerçek çekme yapacağız)
-    const hasAlis = 7424;
-    const hasSatis = 7462;
+    // HAS ALTIN
+    const hasAlis = parseFloat(data.find(x => x.name === "Has Altın").buying);
+    const hasSatis = parseFloat(data.find(x => x.name === "Has Altın").selling);
 
     // KATSAYILAR
     const ceyrekAlis = hasAlis * 1.62;
@@ -56,8 +41,4 @@ app.get("/altin", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Veri alınamadı" });
   }
-});
-
-app.listen(PORT, () => {
-  console.log("Sunucu çalışıyor");
 });
