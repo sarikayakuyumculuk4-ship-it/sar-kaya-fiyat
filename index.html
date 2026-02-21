@@ -8,24 +8,42 @@
 
 <style>
 
-body {
+body{
   margin:0;
-  background:linear-gradient(135deg,#111,#1a1a1a);
-  font-family: 'Montserrat', sans-serif;
-  color:white;
+  font-family:'Montserrat',sans-serif;
+  background:#ffffff;
+  color:#111;
 }
 
-header {
-  background:gold;
-  color:black;
+header{
   text-align:center;
   padding:25px;
-  font-size:38px;
+  font-size:42px;
   font-weight:bold;
-  letter-spacing:2px;
+  color:gold;
 }
 
-.container {
+.ticker{
+  background:#111;
+  color:white;
+  padding:10px;
+  font-size:18px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+.ticker span{
+  display:inline-block;
+  padding-left:100%;
+  animation:scroll 20s linear infinite;
+}
+
+@keyframes scroll{
+  from{transform:translateX(0);}
+  to{transform:translateX(-100%);}
+}
+
+.container{
   width:90%;
   max-width:1200px;
   margin:40px auto;
@@ -34,52 +52,34 @@ header {
   gap:25px;
 }
 
-.card {
-  background:#1f1f1f;
+.card{
+  background:#f8f8f8;
   border-radius:15px;
   padding:25px;
-  box-shadow:0 0 20px rgba(255,215,0,0.2);
-  transition:0.3s;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 
-.card:hover {
-  transform:scale(1.03);
-  box-shadow:0 0 30px rgba(255,215,0,0.4);
-}
-
-.title {
+.title{
   font-size:22px;
-  color:gold;
+  font-weight:bold;
   margin-bottom:15px;
-  display:flex;
-  align-items:center;
-  gap:10px;
+  color:#b8860b;
 }
 
-.title img {
-  width:28px;
-}
-
-.price {
+.price{
   display:flex;
   justify-content:space-between;
   font-size:20px;
   margin-top:10px;
 }
 
-.al {
-  color:#00ff88;
-}
+.al{color:#008000;}
+.sat{color:#cc0000;}
 
-.sat {
-  color:#ff5555;
-}
-
-footer {
+.info{
   text-align:center;
-  padding:20px;
-  font-size:14px;
-  color:#888;
+  margin:50px 0;
+  font-size:18px;
 }
 
 </style>
@@ -89,47 +89,79 @@ footer {
 
 <header>SARIKAYA KUYUMCULUK</header>
 
+<div class="ticker">
+  <span id="doviz">Döviz yükleniyor...</span>
+</div>
+
 <div class="container" id="cards"></div>
 
-<footer>Fiyatlar anlık olarak güncellenmektedir</footer>
+<div class="info">
+  📍 İzmir / Menemen<br>
+  📞 0 (5XX) XXX XX XX<br>
+  🏢 Sarıkaya Kuyumculuk
+</div>
 
 <script>
 
-async function getir() {
-  const res = await fetch("https://sarikaya-backend-1.onrender.com/altin");
-  const data = await res.json();
+async function getirAltin(){
+  try{
+    const res = await fetch("https://sarikaya-backend-1.onrender.com/altin");
+    const data = await res.json();
 
-  const items = [
-    {isim:"HAS ALTIN", al:data.hasAlis, sat:data.hasSatis},
-    {isim:"ÇEYREK ALTIN", al:data.ceyrekAlis, sat:data.ceyrekSatis},
-    {isim:"YARIM ALTIN", al:data.yarimAlis, sat:data.yarimSatis},
-    {isim:"TAM ALTIN", al:data.tamAlis, sat:data.tamSatis},
-    {isim:"ATA ALTIN", al:data.ataAlis, sat:data.ataSatis},
-    {isim:"22 AYAR", al:data.ayar22Alis, sat:data.ayar22Satis}
-  ];
+    if(!data.hasAlis){
+      document.getElementById("cards").innerHTML="Veri alınamadı";
+      return;
+    }
 
-  let html = "";
+    const items=[
+      {isim:"HAS ALTIN",al:data.hasAlis,sat:data.hasSatis},
+      {isim:"ÇEYREK ALTIN",al:data.ceyrekAlis,sat:data.ceyrekSatis},
+      {isim:"YARIM ALTIN",al:data.yarimAlis,sat:data.yarimSatis},
+      {isim:"TAM ALTIN",al:data.tamAlis,sat:data.tamSatis},
+      {isim:"ATA ALTIN",al:data.ataAlis,sat:data.ataSatis},
+      {isim:"22 AYAR",al:data.ayar22Alis,sat:data.ayar22Satis}
+    ];
 
-  items.forEach(i => {
-    html += `
+    let html="";
+    items.forEach(i=>{
+      html+=`
       <div class="card">
-        <div class="title">
-          <img src="https://cdn-icons-png.flaticon.com/512/2933/2933116.png">
-          ${i.isim}
-        </div>
+        <div class="title">${i.isim}</div>
         <div class="price">
           <span class="al">ALIŞ: ${i.al}</span>
           <span class="sat">SATIŞ: ${i.sat}</span>
         </div>
       </div>
-    `;
-  });
+      `;
+    });
 
-  document.getElementById("cards").innerHTML = html;
+    document.getElementById("cards").innerHTML=html;
+
+  }catch{
+    document.getElementById("cards").innerHTML="Sunucu hatası";
+  }
 }
 
-getir();
-setInterval(getir, 10000);
+async function getirDoviz(){
+  try{
+    const res = await fetch("https://open.er-api.com/v6/latest/TRY");
+    const data = await res.json();
+
+    const usd=(1/data.rates.USD).toFixed(2);
+    const eur=(1/data.rates.EUR).toFixed(2);
+
+    document.getElementById("doviz").innerText=
+      `USD: ${usd} | EUR: ${eur} | Fiyatlar anlık güncellenmektedir`;
+  }catch{
+    document.getElementById("doviz").innerText="Döviz verisi alınamadı";
+  }
+}
+
+getirAltin();
+getirDoviz();
+
+setInterval(getirAltin,10000);
+setInterval(getirDoviz,60000);
 
 </script>
 
