@@ -17,8 +17,8 @@ body{
 
 header{
   text-align:center;
-  padding:25px;
-  font-size:42px;
+  padding:30px 10px 10px 10px;
+  font-size:45px;
   font-weight:bold;
   color:gold;
 }
@@ -53,10 +53,15 @@ header{
 }
 
 .card{
-  background:#f8f8f8;
+  background:#f9f9f9;
   border-radius:15px;
   padding:25px;
   box-shadow:0 5px 20px rgba(0,0,0,0.1);
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:scale(1.03);
 }
 
 .title{
@@ -78,8 +83,18 @@ header{
 
 .info{
   text-align:center;
-  margin:50px 0;
+  margin:60px 0;
   font-size:18px;
+  background:#f5f5f5;
+  padding:30px;
+  border-top:3px solid gold;
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  font-size:14px;
+  color:#777;
 }
 
 </style>
@@ -93,13 +108,20 @@ header{
   <span id="doviz">Döviz yükleniyor...</span>
 </div>
 
-<div class="container" id="cards"></div>
+<div class="container" id="cards">
+Yükleniyor...
+</div>
 
 <div class="info">
-  📍 İzmir / Menemen<br>
-  📞 0 (5XX) XXX XX XX<br>
-  🏢 Sarıkaya Kuyumculuk
+  <strong>Sarıkaya Kuyumculuk</strong><br><br>
+  📍 Mithatpaşa Mahallesi, Ertuğrul Cd. No:14<br>
+  35660 Menemen / İzmir<br><br>
+  📞 (0232) 831 00 55
 </div>
+
+<footer>
+Fiyatlar anlık olarak güncellenmektedir.
+</footer>
 
 <script>
 
@@ -108,7 +130,7 @@ async function getirAltin(){
     const res = await fetch("https://sarikaya-backend-1.onrender.com/altin");
     const data = await res.json();
 
-    if(!data.hasAlis){
+    if(!data || !data.hasAlis){
       document.getElementById("cards").innerHTML="Veri alınamadı";
       return;
     }
