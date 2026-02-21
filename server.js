@@ -5,49 +5,61 @@ import cors from "cors";
 const app = express();
 app.use(cors());
 
-app.get("/altin", async (req, res) => {
+const PORT = process.env.PORT || 10000;
+
+// SENİN KATSAYILARIN
+const katsayilar = {
+  has: 0.995,
+  ceyrek: 1.754,
+  yarim: 3.508,
+  cumhuriyet: 7.016,
+  ata: 7.216
+};
+
+app.get("/api/fiyatlar", async (req, res) => {
   try {
 
-    const response = await fetch("https://www.haremaltin.com/api/altin-fiyatlari");
-    const data = await response.json();
+    // ALTIN VERİSİ
+    const altinRes = await fetch("https://api.genelpara.com/embed/altin.json");
+    const altin = await altinRes.json();
+    const gram = parseFloat(altin.GRAM.Alış.replace(",", "."));
 
-    console.log(data); // kontrol için
+    // DÖVİZ VERİSİ
+    const dovizRes = await fetch("https://api.genelpara.com/embed/doviz.json");
+    const doviz = await dovizRes.json();
 
-    const has = data[0]; // ilk veri has altın oluyor genelde
-
-    const hasAlis = parseFloat(has.buying);
-    const hasSatis = parseFloat(has.selling);
-
-    function yuvarla(x){
-      return Math.round(x);
-    }
+    const hesapla = (k) => {
+      const alis = gram * k;
+      return {
+        alis: alis.toFixed(2),
+        satis: (alis + 50).toFixed(2)
+      };
+    };
 
     res.json({
-      hasAlis,
-      hasSatis,
-
-      ceyrekAlis: yuvarla(hasAlis * 1.62),
-      ceyrekSatis: yuvarla(hasSatis * 1.64),
-
-      yarimAlis: yuvarla(hasAlis * 3.24),
-      yarimSatis: yuvarla(hasSatis * 3.27),
-
-      tamAlis: yuvarla(hasAlis * 6.46),
-      tamSatis: yuvarla(hasSatis * 6.52),
-
-      ataAlis: yuvarla(hasAlis * 6.68),
-      ataSatis: yuvarla(hasSatis * 6.71),
-
-      ayar22Alis: yuvarla(hasAlis * 0.913),
-      ayar22Satis: yuvarla(hasSatis * 0.930)
+      gram: {
+        alis: gram.toFixed(2),
+        satis: (gram + 50).toFixed(2)
+      },
+      hasAltin: hesapla(katsayilar.has),
+      ceyrek: hesapla(katsayilar.ceyrek),
+      yarim: hesapla(katsayilar.yarim),
+      cumhuriyet: hesapla(katsayilar.cumhuriyet),
+      ata: hesapla(katsayilar.ata),
+      doviz: {
+        USD: doviz.USD.satis,
+        EUR: doviz.EUR.satis,
+        GBP: doviz.GBP.satis,
+        CHF: doviz.CHF.satis
+      }
     });
 
-  } catch (error) {
-    console.log("HATA:", error);
+  } catch (err) {
+    console.error("HATA:", err);
     res.status(500).json({ error: "Veri alınamadı" });
   }
 });
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("Sunucu çalışıyor");
 });
