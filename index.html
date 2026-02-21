@@ -3,225 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sarıkaya Kuyumculuk | Lüks Canlı Piyasalar</title>
+    <title>Sarıkaya Kuyumculuk | Canlı Borsa</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold-glow: 0 0 10px #d4af37, 0 0 20px #d4af37, 0 0 40px #ffcc00;
-            --main-gold: #d4af37;
-            --dark-bg: #0a0a0a;
+            --gold: #d4af37;
+            --gold-glow: 0 0 15px rgba(212, 175, 55, 0.8), 0 0 30px rgba(212, 175, 55, 0.5);
+            --dark: #0f0f0f;
         }
         
         body { 
             margin:0; 
             font-family: 'Montserrat', sans-serif; 
-            background-color: #ffffff;
-            /* Hafif altın deseni arka planı */
+            background: #ffffff;
             background-image: url('https://www.transparenttextures.com/patterns/gold-dust.png');
-            color: #222; 
             overflow-x: hidden;
         }
 
-        /* Işıklı Neon Altın Header */
+        /* Işıklı Modern Logo */
         header { 
-            background: var(--dark-bg); 
-            padding: 60px 20px 20px 20px; 
-            text-align: center; 
-            border-bottom: 2px solid var(--main-gold);
-            position: relative;
+            background: var(--dark); 
+            padding: 50px 20px 30px 20px; 
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
         }
 
-        .shiny-logo { 
+        .gold-neon { 
             font-family: 'Cinzel Decorative', cursive;
-            font-size: clamp(30px, 8vw, 65px);
+            font-size: clamp(28px, 6vw, 60px);
             color: #fff;
             text-transform: uppercase;
-            letter-spacing: 10px;
+            letter-spacing: 8px;
             margin: 0;
             text-shadow: var(--gold-glow);
-            animation: glow 2s ease-in-out infinite alternate;
+            animation: pulse 2s infinite alternate;
         }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #d4af37, 0 0 20px #d4af37; }
-            to { text-shadow: 0 0 20px #d4af37, 0 0 40px #ffcc00, 0 0 60px #d4af37; }
+        @keyframes pulse {
+            from { text-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold); }
+            to { text-shadow: 0 0 25px #ffcc00, 0 0 45px var(--gold), 0 0 60px #fff; }
         }
 
         /* Akan Döviz Bandı */
-        .ticker-wrap {
-            width: 100%;
+        .ticker-container {
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 12px 0;
             overflow: hidden;
-            background: rgba(212, 175, 55, 0.1);
-            border-bottom: 1px solid var(--main-gold);
-            padding: 10px 0;
         }
 
-        .ticker {
+        .ticker-move {
             display: flex;
             white-space: nowrap;
-            animation: ticker 30s linear infinite;
+            animation: slide 25s linear infinite;
         }
 
         .ticker-item {
-            padding: 0 30px;
-            font-weight: 900;
-            font-size: 18px;
-            color: #b8860b;
-            text-transform: uppercase;
+            padding: 0 40px;
+            font-weight: 800;
+            font-size: 20px;
         }
 
-        @keyframes ticker {
+        @keyframes slide {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
-        }
-
-        /* Hakkımızda Alanı */
-        .about-box {
-            max-width: 1100px;
-            margin: 40px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            text-align: center;
-            font-size: 1.2rem;
-            line-height: 1.8;
-            border-top: 5px solid var(--main-gold);
         }
 
         .container { 
             max-width: 1400px; 
             margin: 40px auto; 
             display: grid; 
-            grid-template-columns: 1fr 1fr; 
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); 
             gap: 40px; 
             padding: 0 20px; 
         }
 
-        .price-card { 
+        .card { 
             background: #fff; 
             padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
-            border: 1px solid #eee;
-            position: relative;
-        }
-
-        /* Kartın kenarına altın süs */
-        .price-card::after {
-            content: ''; position: absolute; top: -5px; right: -5px; bottom: -5px; left: -5px;
-            z-index: -1; background: linear-gradient(45deg, #d4af37, #fff, #b8860b);
-            border-radius: 25px;
+            border-radius: 15px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-top: 6px solid var(--gold);
         }
 
         .card-title { 
             font-family: 'Cinzel Decorative', serif;
-            font-size: 32px; color: #111; margin-bottom: 30px; 
-            text-align: center; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px;
+            font-size: 28px; text-align: center; margin-bottom: 30px; color: var(--dark);
         }
 
-        .price-row { 
-            display: flex; justify-content: space-between; padding: 25px 0; border-bottom: 1px solid #f9f9f9; align-items: center;
+        .row { 
+            display: flex; justify-content: space-between; padding: 22px 0; border-bottom: 1px solid #eee; align-items: center;
         }
 
-        .product-name { font-weight: 900; font-size: 24px; color: #333; }
-        .buy-price { color: #2ecc71; font-weight: 900; font-size: 32px; margin-right: 20px; }
-        .sell-price { color: #e74c3c; font-weight: 900; font-size: 32px; }
-
-        footer {
-            background: #000; color: #fff; padding: 60px 20px; text-align: center; margin-top: 100px;
-        }
-
-        .update-sticky {
-            position: fixed; bottom: 0; width: 100%; background: #d4af37; color: black;
-            text-align: center; padding: 10px; font-weight: 900; z-index: 100;
-        }
-
-        @media (max-width: 1000px) {
-            .container { grid-template-columns: 1fr; }
-            .buy-price, .sell-price { font-size: 24px; }
-        }
-    </style>
-</head>
-<body>
-
-<header>
-    <h1 class="shiny-logo">SARIKAYA KUYUMCULUK</h1>
-</header>
-
-<div class="ticker-wrap">
-    <div class="ticker" id="tickerContent">
-        </div>
-</div>
-
-<div class="about-box">
-    <strong>1996</strong> yılında İzmir’in Menemen ilçesinde <strong>SARIKAYA ALTIN TAKI PAZARLAMA TİC. LTD. ŞTİ.</strong> bünyesinde kurulmuştur. 
-    Çeyrek asrı aşkın süredir Menemen'de güvenin parlayan adresi.
-</div>
-
-<div class="container">
-    <div class="price-card">
-        <div class="card-title">CANLI ALTIN</div>
-        <div id="altinList"></div>
-    </div>
-
-    <div class="price-card">
-        <div class="card-title">DÖVİZ KURLARI</div>
-        <div id="dovizList" style="max-height: 600px; overflow-y: auto;"></div>
-    </div>
-</div>
-
-<footer>
-    <div style="font-size: 24px; color: var(--main-gold); margin-bottom: 20px; font-weight: 900;">BİZE ULAŞIN</div>
-    <p style="font-size: 20px;">Mithatpaşa mahallesi, Ertuğrul Cd. No:14, 35660 Menemen/İzmir</p>
-    <p style="font-size: 36px; font-weight: 900; color: #d4af37;">(0232) 831 00 55</p>
-</footer>
-
-<div class="update-sticky" id="lastUpdate">Fiyatlar Güncelleniyor...</div>
-
-<script>
-async function piyasaBaslat() {
-    try {
-        const dovizRes = await fetch("https://open.er-api.com/v6/latest/USD");
-        const dovizData = await dovizRes.json();
-        const rates = dovizData.rates;
-        const usdTry = rates.TRY;
-
-        const altinRes = await fetch("https://api.gold-api.com/price/XAU");
-        const altinData = await altinRes.json();
-        const onsUSD = altinData.price;
-
-        // Harem Altın 7431 hedefi için çarpan (Anlık kura göre 1.031 - 1.033 idealdir)
-        let turkiyePrimi = 1.031; 
-        let hasBase = (onsUSD / 31.1035) * usdTry * turkiyePrimi;
-
-        // ALTIN LİSTESİ
-        const altinlar = [
-            {isim:"HAS ALTIN", alis:hasBase * 0.998, satis:hasBase * 1.002},
-            {isim:"22 AYAR", alis:hasBase * 0.913, satis:hasBase * 0.930},
-            {isim:"ÇEYREK", alis:hasBase * 1.62, satis:hasBase * 1.64},
-            {isim:"YARIM", alis:hasBase * 3.24, satis:hasBase * 3.27},
-            {isim:"TAM", alis:hasBase * 6.46, satis:hasBase * 6.52},
-            {isim:"ATA LİRA", alis:hasBase * 6.68, satis:hasBase * 6.715}
-        ];
-
-        let goldHTML = "";
-        altinlar.forEach(x => {
-            goldHTML += `
-            <div class="price-row">
-                <div class="product-name">${x.isim}</div>
-                <div>
-                    <span class="buy-price">${Math.floor(x.alis).toLocaleString('tr-TR')} ₺</span>
-                    <span class="sell-price">${Math.ceil(x.satis).toLocaleString('tr-TR')} ₺</span>
-                </div>
-            </div>`;
-        });
-        document.getElementById("altinList").innerHTML = goldHTML;
-
-        // DÖVİZ VE AKAN BAND (TICKER)
-        let dovizHTML = "";
-        let tickerHTML = "";
-        const kurlar = ["USD", "EUR", "GBP", "CHF", "SAR", "AED", "KWD"];
-        
-        kurlar.forEach(code => {
-            let kur = (code === "USD") ? usdTry : usdTry / rates
+        .label { font-weight: 900; font-size: 22px; color: #333; }
+        .buy { color: #27ae60; font-weight: 900; font-size: 28px; }
+        .sell { color: #e74c3c; font-weight: 900; font
