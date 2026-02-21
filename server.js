@@ -1,5 +1,6 @@
 import express from "express";
 import fetch from "node-fetch";
+import cheerio from "cheerio";
 import cors from "cors";
 
 const app = express();
@@ -7,59 +8,29 @@ app.use(cors());
 
 const PORT = process.env.PORT || 10000;
 
-// SENİN KATSAYILARIN
-const katsayilar = {
-  has: 0.995,
-  ceyrek: 1.754,
-  yarim: 3.508,
-  cumhuriyet: 7.016,
-  ata: 7.216
-};
-
-app.get("/api/fiyatlar", async (req, res) => {
+app.get("/api/harem", async (req, res) => {
   try {
+    const response = await fetch("https://haremaltin.com/fiyatlar");
+    const html = await response.text();
 
-    // ALTIN VERİSİ
-    const altinRes = await fetch("https://api.genelpara.com/embed/altin.json");
-    const altin = await altinRes.json();
-    const gram = parseFloat(altin.GRAM.Alış.replace(",", "."));
+    const $ = cheerio.load(html);
 
-    // DÖVİZ VERİSİ
-    const dovizRes = await fetch("https://api.genelpara.com/embed/doviz.json");
-    const doviz = await dovizRes.json();
-
-    const hesapla = (k) => {
-      const alis = gram * k;
-      return {
-        alis: alis.toFixed(2),
-        satis: (alis + 50).toFixed(2)
-      };
-    };
+    // Bunlar örnek selector'lar
+    // Site yapısı değişirse bunlar da değişir!
+    const gramAlis = $("td:contains('Gram Altın')").next().text().trim();
+    const gramSatis = $("td:contains('Gram Altın')").next().next().text().trim();
 
     res.json({
-      gram: {
-        alis: gram.toFixed(2),
-        satis: (gram + 50).toFixed(2)
-      },
-      hasAltin: hesapla(katsayilar.has),
-      ceyrek: hesapla(katsayilar.ceyrek),
-      yarim: hesapla(katsayilar.yarim),
-      cumhuriyet: hesapla(katsayilar.cumhuriyet),
-      ata: hesapla(katsayilar.ata),
-      doviz: {
-        USD: doviz.USD.satis,
-        EUR: doviz.EUR.satis,
-        GBP: doviz.GBP.satis,
-        CHF: doviz.CHF.satis
+      gramAltin: {
+        alis: gramAlis,
+        satis: gramSatis
       }
     });
 
   } catch (err) {
-    console.error("HATA:", err);
-    res.status(500).json({ error: "Veri alınamadı" });
+    console.error(err);
+    res.status(500).json({ error: "Harem Altın verisi çekilemedi" });
   }
 });
 
-app.listen(PORT, () => {
-  console.log("Sunucu çalışıyor");
-});
+app.listen(PORT, () => console.log("Sunucu çalışıyor"));
