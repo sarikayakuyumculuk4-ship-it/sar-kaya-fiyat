@@ -14,23 +14,12 @@
         }
         
         body { 
-            margin: 0; 
-            font-family: 'Montserrat', sans-serif; 
+            margin: 0; font-family: 'Montserrat', sans-serif; 
             background-color: var(--bg-creme);
             background-image: url('https://www.transparenttextures.com/patterns/white-marble.png');
-            color: var(--text-dark);
-            overflow: hidden; /* Ekranın kaymaması için */
-            height: 100vh;
+            color: var(--text-dark); overflow: hidden; height: 100vh;
         }
 
-        /* Köşe Süsleri */
-        .decor-item {
-            position: fixed; pointer-events: none; z-index: 1; opacity: 0.12;
-        }
-        .decor-1 { top: -40px; right: -40px; width: 380px; transform: rotate(15deg); }
-        .decor-2 { bottom: -60px; left: -60px; width: 420px; }
-
-        /* Üst Akan Döviz Bandı */
         .ticker-wrap {
             position: fixed; top: 0; width: 100%; z-index: 1000;
             background: linear-gradient(90deg, #b38b47, #e2c275, #b38b47);
@@ -38,55 +27,17 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .ticker-move {
-            display: flex; white-space: nowrap; animation: ticker-slide 35s linear infinite;
-        }
-
+        .ticker-move { display: flex; white-space: nowrap; animation: ticker-slide 35s linear infinite; }
         .ticker-item { padding: 0 45px; border-right: 1px solid rgba(255,255,255,0.3); }
 
-        @keyframes ticker-slide {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+        @keyframes ticker-slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* Kurumsal Header */
-        header { 
-            background: #fff; padding: 100px 20px 30px 20px; text-align: center;
-            border-bottom: 1px solid #eee; margin-bottom: 20px;
-        }
+        header { background: #fff; padding: 100px 20px 30px 20px; text-align: center; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        .brand-logo { font-family: 'Cinzel', serif; font-size: clamp(30px, 5vw, 70px); color: var(--gold-primary); letter-spacing: 12px; font-weight: 600; text-transform: uppercase; margin: 0; }
+        .brand-slogan { font-family: 'Montserrat', sans-serif; font-size: clamp(12px, 1.5vw, 18px); color: #888; letter-spacing: 5px; font-weight: 300; text-transform: uppercase; margin-top: 8px; display: block; }
 
-        .brand-logo {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(30px, 5vw, 70px);
-            color: var(--gold-primary);
-            letter-spacing: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin: 0;
-        }
-
-        .brand-slogan {
-            font-family: 'Montserrat', sans-serif;
-            font-size: clamp(12px, 1.5vw, 18px);
-            color: #888;
-            letter-spacing: 5px;
-            font-weight: 300;
-            text-transform: uppercase;
-            margin-top: 8px;
-            display: block;
-        }
-
-        /* Ana Tablo Alanı */
-        .main-container {
-            max-width: 1400px; margin: 0 auto; padding: 0 20px;
-            position: relative; z-index: 10;
-        }
-
-        .price-card {
-            background: #ffffff; border-radius: 8px; padding: 20px 40px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.04);
-            border: 1px solid #efefef;
-        }
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 10; }
+        .price-card { background: #ffffff; border-radius: 8px; padding: 20px 40px; box-shadow: 0 15px 50px rgba(0,0,0,0.04); border: 1px solid #efefef; }
 
         .price-table { width: 100%; border-collapse: collapse; }
         .table-head { border-bottom: 2px solid var(--gold-primary); }
@@ -102,23 +53,10 @@
         .price-val.buy { color: #2c3e50; }
         .price-val.sell { color: var(--gold-primary); }
 
-        .status-bar {
-            position: fixed; bottom: 0; width: 100%; background: #fff;
-            border-top: 1px solid #eee; padding: 12px; font-weight: 600;
-            text-align: center; font-size: 16px; color: #bbb; z-index: 1000;
-        }
-
-        @media (max-width: 768px) {
-            .brand-logo { font-size: 26px; letter-spacing: 4px; }
-            .price-val { font-size: 24px; }
-            .prod-name { font-size: 18px; }
-        }
+        .status-bar { position: fixed; bottom: 0; width: 100%; background: #fff; border-top: 1px solid #eee; padding: 12px; font-weight: 600; text-align: center; font-size: 16px; color: #bbb; z-index: 1000; }
     </style>
 </head>
 <body>
-
-<img src="https://pngimg.com/uploads/gold/gold_PNG11021.png" class="decor-item decor-1">
-<img src="https://pngimg.com/uploads/gold/gold_PNG11028.png" class="decor-item decor-2">
 
 <div class="ticker-wrap">
     <div class="ticker-move" id="tickerBox">GÜNCEL VERİLER YÜKLENİYOR...</div>
@@ -157,22 +95,19 @@ async function piyasaGuncelle() {
         const aData = await aRes.json();
         const ons = aData.price;
 
-        // Has Altın alışını 7389 TL'ye sabitlemek için dinamik çarpan hesabı
-        // (ons / 31.1035) * usdTry * X = 7389 -> X = 7389 / ((ons / 31.1035) * usdTry)
-        let temelHas = (ons / 31.1035) * usdTry;
-        let dinamikCarpan = 7389 / temelHas;
-        
+        // Has Altın Alış: 7389 TL
         let hasAlis = 7389; 
-        let hasSatis = hasAlis + 35; // Standart makas
+        let hasSatis = hasAlis + 44; 
 
         const altınlar = [
             {n:"HAS ALTIN (24K)", a:hasAlis, s:hasSatis},
-            {n:"PAKETLİ HAS", a:hasAlis, s:hasSatis + 50}, // Alış aynı, Satış +50 TL
-            {n:"22 AYAR ALTIN", a:hasAlis * 0.912, s:hasSatis * 0.931}, // 0.912 çarpanı uygulandı
-            {n:"ÇEYREK ALTIN", a:hasAlis * 1.62, s:hasAlis * 1.644},
-            {n:"YARIM ALTIN", a:hasAlis * 3.24, s:hasAlis * 3.288},
-            {n:"TAM ALTIN", a:hasAlis * 6.48, s:hasAlis * 6.576},
-            {n:"ATA LİRA", a:hasAlis * 6.685, s:hasAlis * 6.728}
+            {n:"PAKETLİ HAS", a:hasAlis, s:hasSatis + 50}, 
+            {n:"22 AYAR ALTIN", a:hasAlis * 0.912, s:hasSatis * 0.932}, 
+            {n:"ÇEYREK ALTIN", a:hasAlis * 1.62, s:hasAlis * 1.648},
+            {n:"YARIM ALTIN", a:hasAlis * 3.24, s:hasAlis * 3.296},
+            {n:"TAM ALTIN", a:hasAlis * 6.48, s:hasAlis * 6.592},
+            // Ata Lira katsayısı piyasa farkını kapatmak için 6.74'e çekildi
+            {n:"ATA LİRA", a:hasAlis * 6.69, s:hasAlis * 6.745} 
         ];
 
         let gHtml = "";
@@ -187,7 +122,7 @@ async function piyasaGuncelle() {
         document.getElementById("goldRows").innerHTML = gHtml;
 
         let tHtml = "";
-        const kurlar = ["USD", "EUR", "GBP", "CHF", "SAR", "AED"];
+        const kurlar = ["USD", "EUR", "GBP", "CHF", "SAR"];
         kurlar.forEach(c => {
             let kur = (c === "USD") ? usdTry : usdTry / dData.rates[c];
             tHtml += `<div class="ticker-item">${c}: ${(kur*1.002).toFixed(2)} ₺</div>`;
@@ -203,6 +138,5 @@ async function piyasaGuncelle() {
 piyasaGuncelle();
 setInterval(piyasaGuncelle, 30000);
 </script>
-
 </body>
 </html>
