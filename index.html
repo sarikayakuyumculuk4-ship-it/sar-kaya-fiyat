@@ -3,186 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sarıkaya Kuyumculuk | Canlı Altın ve Döviz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Sarıkaya Kuyumculuk | Lüks Canlı Piyasalar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e27d 50%, #b8860b 100%);
-            --dark-bg: #1a1a1a;
-            --text-gold: #d4af37;
+            --gold-glow: 0 0 10px #d4af37, 0 0 20px #d4af37, 0 0 40px #ffcc00;
+            --main-gold: #d4af37;
+            --dark-bg: #0a0a0a;
         }
         
         body { 
             margin:0; 
             font-family: 'Montserrat', sans-serif; 
-            background: #ffffff; 
+            background-color: #ffffff;
+            /* Hafif altın deseni arka planı */
+            background-image: url('https://www.transparenttextures.com/patterns/gold-dust.png');
             color: #222; 
+            overflow-x: hidden;
         }
 
-        /* Lüks Header Tasarımı */
+        /* Işıklı Neon Altın Header */
         header { 
             background: var(--dark-bg); 
-            padding: 50px 20px; 
+            padding: 60px 20px 20px 20px; 
             text-align: center; 
-            border-bottom: 5px solid var(--text-gold);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-bottom: 2px solid var(--main-gold);
+            position: relative;
         }
 
-        .logo-box {
-            display: inline-block;
-            border: 2px solid var(--text-gold);
-            padding: 20px 40px;
-            margin-bottom: 20px;
+        .shiny-logo { 
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: clamp(30px, 8vw, 65px);
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            margin: 0;
+            text-shadow: var(--gold-glow);
+            animation: glow 2s ease-in-out infinite alternate;
         }
 
-        header h1 { 
-            margin: 0; 
-            font-family: 'Cinzel', serif;
-            font-size: 52px; 
-            letter-spacing: 8px; 
-            color: var(--text-gold);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #d4af37, 0 0 20px #d4af37; }
+            to { text-shadow: 0 0 20px #d4af37, 0 0 40px #ffcc00, 0 0 60px #d4af37; }
         }
 
-        /* Hakkımızda Bölümü */
-        .about-section {
-            max-width: 1000px;
+        /* Akan Döviz Bandı */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background: rgba(212, 175, 55, 0.1);
+            border-bottom: 1px solid var(--main-gold);
+            padding: 10px 0;
+        }
+
+        .ticker {
+            display: flex;
+            white-space: nowrap;
+            animation: ticker 30s linear infinite;
+        }
+
+        .ticker-item {
+            padding: 0 30px;
+            font-weight: 900;
+            font-size: 18px;
+            color: #b8860b;
+            text-transform: uppercase;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Hakkımızda Alanı */
+        .about-box {
+            max-width: 1100px;
             margin: 40px auto;
-            text-align: center;
+            background: white;
             padding: 30px;
-            font-size: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            font-size: 1.2rem;
             line-height: 1.8;
-            color: #444;
-            border-left: 5px solid var(--text-gold);
-            background: #fdfbf7;
+            border-top: 5px solid var(--main-gold);
         }
 
         .container { 
-            max-width: 1300px; 
-            margin: 50px auto; 
+            max-width: 1400px; 
+            margin: 40px auto; 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
-            gap: 50px; 
+            gap: 40px; 
             padding: 0 20px; 
         }
 
-        .box { 
+        .price-card { 
             background: #fff; 
             padding: 40px; 
-            border-radius: 15px; 
-            box-shadow: 0 20px 60px rgba(0,0,0,0.07);
+            border-radius: 20px; 
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
             border: 1px solid #eee;
-        }
-
-        .box-title { 
-            font-family: 'Cinzel', serif;
-            font-size: 32px; 
-            color: #1a1a1a; 
-            margin-bottom: 35px; 
-            text-align: center;
             position: relative;
-            padding-bottom: 15px;
         }
 
-        .box-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 25%; width: 50%;
-            height: 3px;
-            background: var(--gold-gradient);
+        /* Kartın kenarına altın süs */
+        .price-card::after {
+            content: ''; position: absolute; top: -5px; right: -5px; bottom: -5px; left: -5px;
+            z-index: -1; background: linear-gradient(45deg, #d4af37, #fff, #b8860b);
+            border-radius: 25px;
         }
 
-        /* Büyük Puntolu Satırlar */
-        .row { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 20px 0; 
-            border-bottom: 1px solid #f0f0f0; 
-            align-items: center;
+        .card-title { 
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 32px; color: #111; margin-bottom: 30px; 
+            text-align: center; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px;
         }
 
-        .name { font-weight: 800; font-size: 22px; color: #1a1a1a; text-transform: uppercase; }
-        .price-group { text-align: right; }
-        .buy { color: #27ae60; font-weight: 800; font-size: 28px; margin-right: 25px; }
-        .sell { color: #e74c3c; font-weight: 800; font-size: 28px; }
-        
-        .label { font-size: 12px; color: #999; display: block; margin-bottom: 5px; letter-spacing: 1px; }
-
-        .currency-scroll {
-            max-height: 600px;
-            overflow-y: auto;
-            padding-right: 10px;
+        .price-row { 
+            display: flex; justify-content: space-between; padding: 25px 0; border-bottom: 1px solid #f9f9f9; align-items: center;
         }
+
+        .product-name { font-weight: 900; font-size: 24px; color: #333; }
+        .buy-price { color: #2ecc71; font-weight: 900; font-size: 32px; margin-right: 20px; }
+        .sell-price { color: #e74c3c; font-weight: 900; font-size: 32px; }
 
         footer {
-            background: var(--dark-bg);
-            color: #fff;
-            padding: 80px 20px;
-            text-align: center;
-            margin-top: 100px;
+            background: #000; color: #fff; padding: 60px 20px; text-align: center; margin-top: 100px;
         }
 
-        .contact-card {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: var(--text-gold);
-            font-weight: 600;
-        }
-
-        .update-bar {
-            background: var(--text-gold);
-            color: #000;
-            padding: 10px;
-            font-weight: bold;
-            position: sticky;
-            bottom: 0;
-            text-align: center;
-            font-size: 18px;
+        .update-sticky {
+            position: fixed; bottom: 0; width: 100%; background: #d4af37; color: black;
+            text-align: center; padding: 10px; font-weight: 900; z-index: 100;
         }
 
         @media (max-width: 1000px) {
             .container { grid-template-columns: 1fr; }
-            header h1 { font-size: 32px; }
-            .buy, .sell { font-size: 22px; }
+            .buy-price, .sell-price { font-size: 24px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-box">
-        <h1>SARIKAYA</h1>
-        <div style="color:white; letter-spacing: 5px; font-size: 14px; margin-top: 10px;">KUYUMCULUK</div>
-    </div>
+    <h1 class="shiny-logo">SARIKAYA KUYUMCULUK</h1>
 </header>
 
-<div class="about-section">
+<div class="ticker-wrap">
+    <div class="ticker" id="tickerContent">
+        </div>
+</div>
+
+<div class="about-box">
     <strong>1996</strong> yılında İzmir’in Menemen ilçesinde <strong>SARIKAYA ALTIN TAKI PAZARLAMA TİC. LTD. ŞTİ.</strong> bünyesinde kurulmuştur. 
-    Çeyrek asrı aşkın süredir Menemen'de güvenin adresi olmaya devam ediyoruz.
+    Çeyrek asrı aşkın süredir Menemen'de güvenin parlayan adresi.
 </div>
 
 <div class="container">
-    <div class="box">
-        <div class="box-title">ALTIN BORSASI</div>
+    <div class="price-card">
+        <div class="card-title">CANLI ALTIN</div>
         <div id="altinList"></div>
     </div>
 
-    <div class="box">
-        <div class="box-title">DÖVİZ KURLARI</div>
-        <div class="currency-scroll" id="dovizList"></div>
+    <div class="price-card">
+        <div class="card-title">DÖVİZ KURLARI</div>
+        <div id="dovizList" style="max-height: 600px; overflow-y: auto;"></div>
     </div>
 </div>
 
 <footer>
-    <div class="contact-card">İLETİŞİM VE ADRES</div>
-    <p style="font-size: 20px; opacity: 0.9;">Mithatpaşa mahallesi, Ertuğrul Cd. No:14, 35660 Menemen/İzmir</p>
-    <p style="font-size: 32px; font-weight: 800; margin-top: 20px;">(0232) 831 00 55</p>
+    <div style="font-size: 24px; color: var(--main-gold); margin-bottom: 20px; font-weight: 900;">BİZE ULAŞIN</div>
+    <p style="font-size: 20px;">Mithatpaşa mahallesi, Ertuğrul Cd. No:14, 35660 Menemen/İzmir</p>
+    <p style="font-size: 36px; font-weight: 900; color: #d4af37;">(0232) 831 00 55</p>
 </footer>
 
-<div class="update-bar" id="update">Fiyatlar Güncelleniyor...</div>
+<div class="update-sticky" id="lastUpdate">Fiyatlar Güncelleniyor...</div>
 
 <script>
-async function piyasaVerisi() {
+async function piyasaBaslat() {
     try {
         const dovizRes = await fetch("https://open.er-api.com/v6/latest/USD");
         const dovizData = await dovizRes.json();
@@ -193,76 +191,37 @@ async function piyasaVerisi() {
         const altinData = await altinRes.json();
         const onsUSD = altinData.price;
 
-        /* FİYAT AYARI: Harem Altın 7431 bandı için 1.031 çarpanı */
+        // Harem Altın 7431 hedefi için çarpan (Anlık kura göre 1.031 - 1.033 idealdir)
         let turkiyePrimi = 1.031; 
         let hasBase = (onsUSD / 31.1035) * usdTry * turkiyePrimi;
 
-        // Altın Tablosu
+        // ALTIN LİSTESİ
         const altinlar = [
             {isim:"HAS ALTIN", alis:hasBase * 0.998, satis:hasBase * 1.002},
             {isim:"22 AYAR", alis:hasBase * 0.913, satis:hasBase * 0.930},
-            {isim:"ÇEYREK ALTIN", alis:hasBase * 1.62, satis:hasBase * 1.64},
-            {isim:"YARIM ALTIN", alis:hasBase * 3.24, satis:hasBase * 3.27},
-            {isim:"TAM ALTIN", alis:hasBase * 6.46, satis:hasBase * 6.52},
+            {isim:"ÇEYREK", alis:hasBase * 1.62, satis:hasBase * 1.64},
+            {isim:"YARIM", alis:hasBase * 3.24, satis:hasBase * 3.27},
+            {isim:"TAM", alis:hasBase * 6.46, satis:hasBase * 6.52},
             {isim:"ATA LİRA", alis:hasBase * 6.68, satis:hasBase * 6.715}
         ];
 
-        let htmlA = "";
+        let goldHTML = "";
         altinlar.forEach(x => {
-            htmlA += `
-            <div class="row">
-                <div class="name">${x.isim}</div>
-                <div class="price-group">
-                    <span class="label">ALIŞ / SATIŞ</span>
-                    <span class="buy">${Math.floor(x.alis).toLocaleString('tr-TR')} ₺</span>
-                    <span class="sell">${Math.ceil(x.satis).toLocaleString('tr-TR')} ₺</span>
+            goldHTML += `
+            <div class="price-row">
+                <div class="product-name">${x.isim}</div>
+                <div>
+                    <span class="buy-price">${Math.floor(x.alis).toLocaleString('tr-TR')} ₺</span>
+                    <span class="sell-price">${Math.ceil(x.satis).toLocaleString('tr-TR')} ₺</span>
                 </div>
             </div>`;
         });
-        document.getElementById("altinList").innerHTML = htmlA;
+        document.getElementById("altinList").innerHTML = goldHTML;
 
-        // Döviz Tablosu (Genişletilmiş)
-        let htmlD = "";
-        const kurlar = ["EUR", "GBP", "CHF", "CAD", "AUD", "JPY", "SAR", "AED", "KWD"];
+        // DÖVİZ VE AKAN BAND (TICKER)
+        let dovizHTML = "";
+        let tickerHTML = "";
+        const kurlar = ["USD", "EUR", "GBP", "CHF", "SAR", "AED", "KWD"];
         
-        // USD İlk Sırada
-        htmlD += `
-            <div class="row">
-                <div class="name">USD - DOLAR</div>
-                <div class="price-group">
-                    <span class="label">ALIŞ / SATIŞ</span>
-                    <span class="buy">${(usdTry*0.998).toFixed(4)}</span>
-                    <span class="sell">${(usdTry*1.002).toFixed(4)}</span>
-                </div>
-            </div>`;
-
         kurlar.forEach(code => {
-            if(rates[code]) {
-                let kur = usdTry / rates[code];
-                htmlD += `
-                <div class="row">
-                    <div class="name">${code} - TÜRK LİRASI</div>
-                    <div class="price-group">
-                        <span class="label">ALIŞ / SATIŞ</span>
-                        <span class="buy">${(kur*0.998).toFixed(4)}</span>
-                        <span class="sell">${(kur*1.002).toFixed(4)}</span>
-                    </div>
-                </div>`;
-            }
-        });
-        document.getElementById("dovizList").innerHTML = htmlD;
-
-        document.getElementById("update").innerText = "SON GÜNCELLEME: " + new Date().toLocaleTimeString('tr-TR');
-
-    } catch (e) {
-        document.getElementById("update").innerText = "FİYATLAR SENKRONİZE EDİLEMİYOR!";
-    }
-}
-
-// Başlat ve 30 saniyede bir döngüye sok
-piyasaVerisi();
-setInterval(piyasaVerisi, 30000);
-</script>
-
-</body>
-</html>
+            let kur = (code === "USD") ? usdTry : usdTry / rates
