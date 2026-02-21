@@ -24,7 +24,7 @@
 
         /* Lüks Altın Külçesi Süsleri */
         .decor-item {
-            position: fixed; pointer-events: none; z-index: 1; opacity: 0.18;
+            position: fixed; pointer-events: none; z-index: 1; opacity: 0.12;
         }
         .decor-1 { top: -40px; right: -40px; width: 380px; transform: rotate(15deg); }
         .decor-2 { bottom: -60px; left: -60px; width: 420px; }
@@ -33,7 +33,7 @@
         .ticker-wrap {
             position: fixed; top: 0; width: 100%; z-index: 1000;
             background: linear-gradient(90deg, #b38b47, #e2c275, #b38b47);
-            color: #fff; padding: 14px 0; font-size: 22px; font-weight: 800;
+            color: #fff; padding: 12px 0; font-size: 22px; font-weight: 800;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
@@ -50,14 +50,13 @@
 
         /* Kurumsal Header & Slogan */
         header { 
-            background: #fff; padding: 110px 20px 70px 20px; text-align: center;
-            border-bottom: 1px solid #eee; margin-bottom: 40px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
+            background: #fff; padding: 90px 20px 40px 20px; text-align: center;
+            border-bottom: 1px solid #eee; margin-bottom: 20px;
         }
 
         .brand-logo {
             font-family: 'Cinzel', serif;
-            font-size: clamp(35px, 6vw, 85px);
+            font-size: clamp(30px, 5vw, 70px);
             color: var(--gold-primary);
             letter-spacing: 12px;
             font-weight: 600;
@@ -68,72 +67,54 @@
 
         .brand-slogan {
             font-family: 'Montserrat', sans-serif;
-            font-size: clamp(14px, 2vw, 22px);
+            font-size: clamp(12px, 1.5vw, 18px);
             color: #888;
-            letter-spacing: 6px;
+            letter-spacing: 5px;
             font-weight: 300;
             text-transform: uppercase;
-            margin-top: 15px;
+            margin-top: 10px;
             display: block;
         }
 
         /* Ana Panel */
         .main-container {
-            max-width: 1250px; margin: 0 auto 120px auto; padding: 0 20px;
+            max-width: 1300px; margin: 0 auto 80px auto; padding: 0 20px;
             position: relative; z-index: 10;
         }
 
         .price-card {
-            background: #ffffff; border-radius: 8px; padding: 50px;
+            background: #ffffff; border-radius: 8px; padding: 30px 50px;
             box-shadow: 0 15px 50px rgba(0,0,0,0.04);
             border: 1px solid #efefef;
-        }
-
-        .card-header {
-            text-align: center; margin-bottom: 50px; padding-bottom: 25px; 
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-        .card-header h2 {
-            font-family: 'Cinzel', serif; font-size: 34px; color: var(--gold-primary);
-            letter-spacing: 5px; margin: 0;
         }
 
         /* Tablo Tasarımı */
         .price-table { width: 100%; border-collapse: collapse; }
         .table-head { border-bottom: 2px solid var(--gold-primary); }
-        .table-head th { padding: 25px; text-align: right; color: #aaa; font-size: 15px; font-weight: 500; }
+        .table-head th { padding: 15px 25px; text-align: right; color: #aaa; font-size: 14px; font-weight: 500; }
         .table-head th:first-child { text-align: left; }
 
         .price-row { border-bottom: 1px solid #fcfcfc; transition: all 0.3s; }
-        .price-row:hover { background: #fdfaf5; transform: scale(1.01); }
-        .price-row td { padding: 35px 25px; text-align: right; }
+        .price-row:hover { background: #fdfaf5; }
+        .price-row td { padding: 22px 25px; text-align: right; }
         .price-row td:first-child { text-align: left; }
 
-        .prod-name { font-weight: 800; font-size: 26px; color: #222; }
-        .price-val { font-weight: 800; font-size: 40px; }
+        .prod-name { font-weight: 800; font-size: 24px; color: #222; }
+        .price-val { font-weight: 800; font-size: 38px; }
         .price-val.buy { color: #2c3e50; }
         .price-val.sell { color: var(--gold-primary); }
 
-        /* Alt Bilgi */
-        footer {
-            background: #fff; padding: 100px 20px; text-align: center;
-            border-top: 1px solid #eee;
-        }
-
-        .footer-tel { font-size: 45px; font-weight: 800; color: var(--gold-primary); margin-top: 15px; }
-
         .status-bar {
             position: fixed; bottom: 0; width: 100%; background: #fff;
-            border-top: 1px solid #eee; padding: 18px; font-weight: 600;
-            text-align: center; font-size: 17px; color: #bbb; z-index: 1000;
+            border-top: 1px solid #eee; padding: 12px; font-weight: 600;
+            text-align: center; font-size: 16px; color: #bbb; z-index: 1000;
         }
 
         @media (max-width: 768px) {
-            .brand-logo { font-size: 32px; letter-spacing: 4px; }
-            .brand-slogan { font-size: 12px; letter-spacing: 3px; }
-            .price-val { font-size: 26px; }
-            .price-card { padding: 25px; }
+            .brand-logo { font-size: 28px; letter-spacing: 4px; }
+            .price-val { font-size: 22px; }
+            .price-card { padding: 15px; }
+            .price-row td { padding: 15px 10px; }
         }
     </style>
 </head>
@@ -153,13 +134,10 @@
 
 <div class="main-container">
     <div class="price-card">
-        <div class="card-header">
-            <h2>SARRAFİYE GRUBU</h2>
-        </div>
         <table class="price-table">
             <thead class="table-head">
                 <tr>
-                    <th>ÜRÜN</th>
+                    <th>ÜRÜN ADI</th>
                     <th>ALIŞ (TL)</th>
                     <th>SATIŞ (TL)</th>
                 </tr>
@@ -169,12 +147,7 @@
     </div>
 </div>
 
-<footer>
-    <div style="font-size: 20px; color: #999;">Mithatpaşa Mah. Ertuğrul Cd. No:14 Menemen/İzmir</div>
-    <div class="footer-tel">(0232) 831 00 55</div>
-</footer>
-
-<div class="status-bar" id="updateStatus">Sistem aktif...</div>
+<div class="status-bar" id="updateStatus">Fiyatlar güncelleniyor...</div>
 
 <script>
 async function piyasaGuncelle() {
@@ -187,12 +160,12 @@ async function piyasaGuncelle() {
         const aData = await aRes.json();
         const ons = aData.price;
 
-        // Hedeflenen Harem/Özbağ kur farkı çarpanı
         let carpan = 1.0322; 
         let hasGram = (ons / 31.1035) * usdTry * carpan;
 
         const altınlar = [
             {n:"HAS ALTIN (24K)", a:hasGram*0.9985, s:hasGram*1.0015},
+            {n:"PAKETLİ HAS", a:(hasGram*0.9985)+50, s:(hasGram*1.0015)+50}, // 50 TL fark eklendi
             {n:"22 AYAR ALTIN", a:hasGram*0.913, s:hasGram*0.931},
             {n:"ÇEYREK ALTIN", a:hasGram*1.62, s:hasGram*1.644},
             {n:"YARIM ALTIN", a:hasGram*3.24, s:hasGram*3.288},
@@ -221,7 +194,7 @@ async function piyasaGuncelle() {
 
         document.getElementById("updateStatus").innerText = "SON GÜNCELLEME: " + new Date().toLocaleTimeString('tr-TR');
     } catch (e) {
-        document.getElementById("updateStatus").innerText = "SİSTEM BAĞLANTISI KONTROL EDİLİYOR...";
+        document.getElementById("updateStatus").innerText = "GÜNCELLEME BEKLENİYOR...";
     }
 }
 
