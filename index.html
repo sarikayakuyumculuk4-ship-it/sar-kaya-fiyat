@@ -2,56 +2,58 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Sarı Kaya Kuyumculuk - Canlı Fiyatlar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarı Kaya Kuyumculuk</title>
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: white; text-align: center; }
-        table { margin: 50px auto; border-collapse: collapse; width: 80%; max-width: 600px; background: #333; }
-        th, td { padding: 15px; border: 1px solid #444; font-size: 1.2rem; }
-        th { background: #d4af37; color: black; }
-        .fiyat { color: #00ff00; font-weight: bold; }
-        .baslik { color: #d4af37; margin-top: 30px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #fff; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 90%; max-width: 500px; margin-top: 50px; }
+        h1 { color: #d4af37; border-bottom: 2px solid #d4af37; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; background: #1e1e1e; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #333; }
+        th { background: #d4af37; color: #000; }
+        .price { color: #4CAF50; font-weight: bold; font-family: monospace; font-size: 1.2em; }
+        .update-text { font-size: 0.8em; color: #888; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <h1 class="baslik">Sarı Kaya Kuyumculuk</h1>
-    <p>Canlı Altın Fiyatları (Anlık Güncellenir)</p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Cins</th>
-                <th>Alış (TL)</th>
-                <th>Satış (TL)</th>
-            </tr>
-        </thead>
-        <tbody id="fiyat-tablosu">
-            <tr><td colspan="3">Yükleniyor...</td></tr>
-        </tbody>
-    </table>
+    <div class="container">
+        <h1>Sarı Kaya Kuyumculuk</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>CİNS</th>
+                    <th>ALIŞ</th>
+                    <th>SATIŞ</th>
+                </tr>
+            </thead>
+            <tbody id="gold-table">
+                <tr><td colspan="3">Fiyatlar Güncelleniyor...</td></tr>
+            </tbody>
+        </table>
+        <p class="update-text">Fiyatlar her 30 saniyede bir otomatik güncellenir.</p>
+    </div>
 
     <script>
-        async function fiyatlariGetir() {
+        async function fetchPrices() {
             try {
-                const response = await fetch('/api/fiyatlar');
-                const data = await response.json();
+                const res = await fetch('/api/fiyatlar');
+                const data = await res.json();
+                const table = document.getElementById('gold-table');
                 
-                const tablo = document.getElementById('fiyat-tablosu');
-                tablo.innerHTML = `
-                    <tr><td>Has Altın</td><td colspan="2" class="fiyat">${data.hasAltin} TL</td></tr>
-                    <tr><td>22 Ayar</td><td class="fiyat">${data.ayar22.alis}</td><td class="fiyat">${data.ayar22.satis}</td></tr>
-                    <tr><td>Çeyrek Altın</td><td class="fiyat">${data.ceyrek.alis}</td><td class="fiyat">${data.ceyrek.satis}</td></tr>
-                    <tr><td>Yarım Altın</td><td class="fiyat">${data.yarim.alis}</td><td class="fiyat">${data.yarim.satis}</td></tr>
-                    <tr><td>Tam Altın</td><td class="fiyat">${data.tam.alis}</td><td class="fiyat">${data.tam.satis}</td></tr>
-                    <tr><td>Ata Lira</td><td class="fiyat">${data.ata.alis}</td><td class="fiyat">${data.ata.satis}</td></tr>
+                table.innerHTML = `
+                    <tr><td>22 Ayar (Gr)</td><td class="price">${data.ayar22.alis}</td><td class="price">${data.ayar22.satis}</td></tr>
+                    <tr><td>Çeyrek Altın</td><td class="price">${data.ceyrek.alis}</td><td class="price">${data.ceyrek.satis}</td></tr>
+                    <tr><td>Yarım Altın</td><td class="price">${data.yarim.alis}</td><td class="price">${data.yarim.satis}</td></tr>
+                    <tr><td>Tam Altın</td><td class="price">${data.tam.alis}</td><td class="price">${data.tam.satis}</td></tr>
+                    <tr><td>Ata Lira</td><td class="price">${data.ata.alis}</td><td class="price">${data.ata.satis}</td></tr>
                 `;
-            } catch (e) {
-                console.error("Hata:", e);
+            } catch (err) {
+                console.error("Hata:", err);
             }
         }
-
-        fiyatlariGetir();
-        setInterval(fiyatlariGetir, 30000); // 30 saniyede bir güncelle
+        fetchPrices();
+        setInterval(fetchPrices, 30000);
     </script>
 </body>
 </html>
