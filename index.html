@@ -1,190 +1,96 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sarıkaya Kuyumculuk</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
-
-body{
-  margin:0;
-  font-family:'Montserrat',sans-serif;
-  background:#ffffff;
-  color:#111;
-}
-
-header{
-  text-align:center;
-  padding:30px 10px 10px 10px;
-  font-size:45px;
-  font-weight:bold;
-  color:gold;
-}
-
-.ticker{
-  background:#111;
-  color:white;
-  padding:10px;
-  font-size:18px;
-  overflow:hidden;
-  white-space:nowrap;
-}
-
-.ticker span{
-  display:inline-block;
-  padding-left:100%;
-  animation:scroll 20s linear infinite;
-}
-
-@keyframes scroll{
-  from{transform:translateX(0);}
-  to{transform:translateX(-100%);}
-}
-
-.container{
-  width:90%;
-  max-width:1200px;
-  margin:40px auto;
-  display:grid;
-  grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
-  gap:25px;
-}
-
-.card{
-  background:#f9f9f9;
-  border-radius:15px;
-  padding:25px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.1);
-  transition:0.3s;
-}
-
-.card:hover{
-  transform:scale(1.03);
-}
-
-.title{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:15px;
-  color:#b8860b;
-}
-
-.price{
+body { margin:0; font-family:Arial; background:white; }
+header { text-align:center; padding:30px 10px 10px; }
+h1 { color:gold; font-size:40px; margin:0; }
+.marquee { background:#f5f5f5; padding:8px; font-weight:bold; }
+.container { max-width:900px; margin:30px auto; }
+.card {
   display:flex;
   justify-content:space-between;
-  font-size:20px;
-  margin-top:10px;
+  align-items:center;
+  background:#fafafa;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
-
-.al{color:#008000;}
-.sat{color:#cc0000;}
-
-.info{
+.price { text-align:right; }
+.footer {
   text-align:center;
-  margin:60px 0;
-  font-size:18px;
-  background:#f5f5f5;
-  padding:30px;
-  border-top:3px solid gold;
-}
-
-footer{
-  text-align:center;
+  margin-top:40px;
   padding:20px;
-  font-size:14px;
-  color:#777;
+  background:#f5f5f5;
 }
-
 </style>
 </head>
 
 <body>
 
-<header>SARIKAYA KUYUMCULUK</header>
+<header>
+<h1>SARIKAYA KUYUMCULUK</h1>
+</header>
 
-<div class="ticker">
-  <span id="doviz">Döviz yükleniyor...</span>
+<div class="marquee">
+<marquee id="doviz">Yükleniyor...</marquee>
 </div>
 
-<div class="container" id="cards">
-Yükleniyor...
-</div>
+<div class="container" id="liste"></div>
 
-<div class="info">
-  <strong>Sarıkaya Kuyumculuk</strong><br><br>
-  📍 Mithatpaşa Mahallesi, Ertuğrul Cd. No:14<br>
-  35660 Menemen / İzmir<br><br>
-  📞 (0232) 831 00 55
+<div class="footer">
+<b>Adres:</b> Mithatpaşa Mahallesi, Ertuğrul Cd. No:14, 35660 Menemen/İzmir<br>
+<b>Telefon:</b> (0232) 831 00 55
 </div>
-
-<footer>
-Fiyatlar anlık olarak güncellenmektedir.
-</footer>
 
 <script>
-
-async function getirAltin(){
-  try{
-    const res = await fetch("https://sarikaya-backend-1.onrender.com/altin");
+async function getir() {
+  try {
+    const res = await fetch("https://sarikaya-backend-1.onrender.com/api/fiyatlar");
     const data = await res.json();
 
-    if(!data || !data.hasAlis){
-      document.getElementById("cards").innerHTML="Veri alınamadı";
-      return;
-    }
+    document.getElementById("doviz").innerHTML =
+      "USD: " + data.doviz.USD + " ₺ | " +
+      "EUR: " + data.doviz.EUR + " ₺ | " +
+      "GBP: " + data.doviz.GBP + " ₺ | " +
+      "CHF: " + data.doviz.CHF + " ₺";
 
-    const items=[
-      {isim:"HAS ALTIN",al:data.hasAlis,sat:data.hasSatis},
-      {isim:"ÇEYREK ALTIN",al:data.ceyrekAlis,sat:data.ceyrekSatis},
-      {isim:"YARIM ALTIN",al:data.yarimAlis,sat:data.yarimSatis},
-      {isim:"TAM ALTIN",al:data.tamAlis,sat:data.tamSatis},
-      {isim:"ATA ALTIN",al:data.ataAlis,sat:data.ataSatis},
-      {isim:"22 AYAR",al:data.ayar22Alis,sat:data.ayar22Satis}
+    const urunler = [
+      { ad:"Gram Altın", veri:data.gram },
+      { ad:"Has Altın", veri:data.hasAltin },
+      { ad:"Çeyrek Altın", veri:data.ceyrek },
+      { ad:"Yarım Altın", veri:data.yarim },
+      { ad:"Cumhuriyet", veri:data.cumhuriyet },
+      { ad:"Ata Lira", veri:data.ata }
     ];
 
-    let html="";
-    items.forEach(i=>{
-      html+=`
-      <div class="card">
-        <div class="title">${i.isim}</div>
-        <div class="price">
-          <span class="al">ALIŞ: ${i.al}</span>
-          <span class="sat">SATIŞ: ${i.sat}</span>
+    const liste = document.getElementById("liste");
+    liste.innerHTML = "";
+
+    urunler.forEach(u => {
+      liste.innerHTML += `
+        <div class="card">
+          <div><b>${u.ad}</b></div>
+          <div class="price">
+            <div>Alış: ${u.veri.alis} ₺</div>
+            <div>Satış: ${u.veri.satis} ₺</div>
+          </div>
         </div>
-      </div>
       `;
     });
 
-    document.getElementById("cards").innerHTML=html;
-
-  }catch{
-    document.getElementById("cards").innerHTML="Sunucu hatası";
+  } catch {
+    document.getElementById("liste").innerHTML = "Veri alınamadı";
   }
 }
 
-async function getirDoviz(){
-  try{
-    const res = await fetch("https://open.er-api.com/v6/latest/TRY");
-    const data = await res.json();
-
-    const usd=(1/data.rates.USD).toFixed(2);
-    const eur=(1/data.rates.EUR).toFixed(2);
-
-    document.getElementById("doviz").innerText=
-      `USD: ${usd} | EUR: ${eur} | Fiyatlar anlık güncellenmektedir`;
-  }catch{
-    document.getElementById("doviz").innerText="Döviz verisi alınamadı";
-  }
-}
-
-getirAltin();
-getirDoviz();
-
-setInterval(getirAltin,10000);
-setInterval(getirDoviz,60000);
-
+getir();
+setInterval(getir, 30000);
 </script>
 
 </body>
