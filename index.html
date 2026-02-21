@@ -3,162 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sarıkaya Kuyumculuk • Fiyatlar</title>
+<title>Sarıkaya Kuyumculuk</title>
 
 <style>
-body {
+body{
     margin:0;
-    padding:0;
-    font-family: Arial, sans-serif;
-    background: #f9f9f9;
-    color: #222;
+    font-family:Arial, sans-serif;
+    background:#f4f4f4;
     text-align:center;
 }
-
-header {
+header{
     background:#111;
     color:white;
-    padding:18px;
-    font-size:24px;
+    padding:20px;
+    font-size:22px;
     font-weight:bold;
 }
-
-.container {
-    width:90%;
-    max-width:800px;
+.container{
+    max-width:700px;
     margin:20px auto;
 }
-
-.card {
-    background:#fff;
-    border-radius:10px;
-    padding:15px 20px;
+.card{
+    background:white;
+    padding:15px;
     margin:10px 0;
-    box-shadow:0 4px 12px rgba(0,0,0,0.06);
+    border-radius:8px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.08);
 }
-
-.card h3 {
-    margin:6px 0;
-    color:#444;
-}
-
-.price {
-    font-size:22px;
+.price{
+    font-size:20px;
     font-weight:bold;
     color:#c59d00;
 }
-
-.update {
+.update{
+    margin-top:15px;
     font-size:14px;
-    margin:14px 0;
     color:#555;
 }
 </style>
 </head>
-
 <body>
 
 <header>Sarıkaya Kuyumculuk</header>
 
 <div class="container">
-    <div class="card">
-        <h3>USD / TRY</h3>
-        <div class="price" id="usd">Yükleniyor...</div>
-    </div>
 
-    <div class="card">
-        <h3>EUR / TRY</h3>
-        <div class="price" id="eur">Yükleniyor...</div>
-    </div>
+<div class="card">
+<h3>USD / TRY</h3>
+<div class="price" id="usd">Yükleniyor...</div>
+</div>
 
-    <div class="card">
-        <h3>Gram Altın</h3>
-        <div class="price" id="gramAltin">Yükleniyor...</div>
-    </div>
+<div class="card">
+<h3>EUR / TRY</h3>
+<div class="price" id="eur">Yükleniyor...</div>
+</div>
 
-    <div class="card">
-        <h3>22 Ayar</h3>
-        <div class="price" id="ayar22">Yükleniyor...</div>
-    </div>
+<div class="card">
+<h3>Gram Altın</h3>
+<div class="price" id="gram">Yükleniyor...</div>
+</div>
 
-    <div class="card">
-        <h3>Çeyrek Altın</h3>
-        <div class="price" id="ceyrek">Yükleniyor...</div>
-    </div>
+<div class="card">
+<h3>22 Ayar (Alış / Satış)</h3>
+<div class="price" id="ayar22">Yükleniyor...</div>
+</div>
 
-    <div class="card">
-        <h3>Yarım Altın</h3>
-        <div class="price" id="yarim">Yükleniyor...</div>
-    </div>
+<div class="card">
+<h3>Çeyrek</h3>
+<div class="price" id="ceyrek">Yükleniyor...</div>
+</div>
 
-    <div class="card">
-        <h3>Tam Altın</h3>
-        <div class="price" id="tam">Yükleniyor...</div>
-    </div>
+<div class="card">
+<h3>Yarım</h3>
+<div class="price" id="yarim">Yükleniyor...</div>
+</div>
 
-    <div class="card">
-        <h3>Ata Altını</h3>
-        <div class="price" id="ata">Yükleniyor...</div>
-    </div>
+<div class="card">
+<h3>Tam</h3>
+<div class="price" id="tam">Yükleniyor...</div>
+</div>
+
+<div class="card">
+<h3>Ata</h3>
+<div class="price" id="ata">Yükleniyor...</div>
+</div>
+
 </div>
 
 <div class="update" id="update"></div>
 
 <script>
 
-// Katsayılar
-const katsayi = {
-    ceyrek: 1.63,
-    yarim: 3.27,
-    tam: 6.50,
-    ata: 6.70,
-    ayar22Alis: 0.913,
-    ayar22Satis: 0.930
-};
+async function getir(){
 
-async function guncelle() {
-    try {
+try{
 
-        // Döviz verisi
-        const dovizRes = await fetch("https://api.exchangerate.host/latest?base=TRY&symbols=USD,EUR");
-        const dovizData = await dovizRes.json();
+// DÖVİZ
+let doviz = await fetch("https://open.er-api.com/v6/latest/USD");
+let d = await doviz.json();
 
-        const usd = (1 / dovizData.rates.USD).toFixed(4);
-        const eur = (1 / dovizData.rates.EUR).toFixed(4);
+let usd = d.rates.TRY;
+let eur = usd / d.rates.EUR;
 
-        document.getElementById("usd").innerText = usd + " ₺";
-        document.getElementById("eur").innerText = eur + " ₺";
+document.getElementById("usd").innerText = usd.toFixed(2) + " ₺";
+document.getElementById("eur").innerText = eur.toFixed(2) + " ₺";
 
-        // Altın (XAU/TRY)
-        const altinRes = await fetch("https://api.exchangerate.host/latest?base=TRY&symbols=XAU");
-        const altinData = await altinRes.json();
+// Gram altını USD bazlı yaklaşık hesaplıyoruz
+// 1 ons altın ~ 31.10 gram
+// USD ons fiyatı sabit çekiyoruz (yaklaşık API)
+let altin = await fetch("https://api.gold-api.com/price/XAU");
+let a = await altin.json();
 
-        const gramAltin = (1 / altinData.rates.XAU).toFixed(2);
+let onsUSD = a.price;
+let gramAltin = (onsUSD / 31.10) * usd;
 
-        document.getElementById("gramAltin").innerText = gramAltin + " ₺";
+document.getElementById("gram").innerText = gramAltin.toFixed(2) + " ₺";
 
-        // Altın hesaplamalar
-        const has = parseFloat(gramAltin);
+// 22 ayar
+let alis22 = gramAltin * 0.913;
+let satis22 = gramAltin * 0.930;
 
-        const ayar22Alis = (has*katsayi.ayar22Alis).toFixed(2);
-        const ayar22Satis = (has*katsayi.ayar22Satis).toFixed(2);
+document.getElementById("ayar22").innerText =
+alis22.toFixed(2) + " / " + satis22.toFixed(2) + " ₺";
 
-        document.getElementById("ayar22").innerText = ayar22Alis + " / " + ayar22Satis + " ₺";
-        document.getElementById("ceyrek").innerText = (has*katsayi.ceyrek).toFixed(2) + " ₺";
-        document.getElementById("yarim").innerText = (has*katsayi.yarim).toFixed(2) + " ₺";
-        document.getElementById("tam").innerText = (has*katsayi.tam).toFixed(2) + " ₺";
-        document.getElementById("ata").innerText = (has*katsayi.ata).toFixed(2) + " ₺";
+// Çarpanlı altınlar
+document.getElementById("ceyrek").innerText = (gramAltin * 1.63).toFixed(2) + " ₺";
+document.getElementById("yarim").innerText = (gramAltin * 3.27).toFixed(2) + " ₺";
+document.getElementById("tam").innerText = (gramAltin * 6.50).toFixed(2) + " ₺";
+document.getElementById("ata").innerText = (gramAltin * 6.70).toFixed(2) + " ₺";
 
-        document.getElementById("update").innerText = "Son Güncelleme: " + new Date().toLocaleString();
+document.getElementById("update").innerText =
+"Son Güncelleme: " + new Date().toLocaleString();
 
-    } catch(err) {
-        console.error("Veri çekilemedi", err);
-        document.getElementById("update").innerText = "Veri ulaşılamadı.";
-    }
+}catch(e){
+document.getElementById("update").innerText = "Veri alınamadı.";
 }
 
-guncelle();
-setInterval(guncelle, 60000);
+}
+
+getir();
+setInterval(getir,60000);
 
 </script>
 
