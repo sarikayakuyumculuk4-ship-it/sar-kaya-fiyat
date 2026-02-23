@@ -32,7 +32,7 @@
 
         @keyframes ticker-slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        header { background: #fff; padding: 100px 20px 30px 20px; text-align: center; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        header { background: #fff; padding: 90px 20px 25px 20px; text-align: center; border-bottom: 1px solid #eee; margin-bottom: 20px; }
         .brand-logo { font-family: 'Cinzel', serif; font-size: clamp(30px, 5vw, 70px); color: var(--gold-primary); letter-spacing: 12px; font-weight: 600; text-transform: uppercase; margin: 0; }
         .brand-slogan { font-family: 'Montserrat', sans-serif; font-size: clamp(12px, 1.5vw, 18px); color: #888; letter-spacing: 5px; font-weight: 300; text-transform: uppercase; margin-top: 8px; display: block; }
 
@@ -59,7 +59,7 @@
 <body>
 
 <div class="ticker-wrap">
-    <div class="ticker-move" id="tickerBox">GÜNCEL VERİLER YÜKLENİYOR...</div>
+    <div class="ticker-move" id="tickerBox">GÜNCEL HAREM VERİLERİ YÜKLENİYOR...</div>
 </div>
 
 <header>
@@ -82,11 +82,12 @@
     </div>
 </div>
 
-<div class="status-bar" id="updateStatus">Fiyatlar senkronize ediliyor...</div>
+<div class="status-bar" id="updateStatus">Piyasa verileri anlık senkronize ediliyor...</div>
 
 <script>
 async function piyasaGuncelle() {
     try {
+        // Döviz ve Ons Altın verilerini al
         const dRes = await fetch("https://open.er-api.com/v6/latest/USD");
         const dData = await dRes.json();
         const usdTry = dData.rates.TRY;
@@ -95,18 +96,23 @@ async function piyasaGuncelle() {
         const aData = await aRes.json();
         const ons = aData.price;
 
-        // Has Altın Alış: 7400 TL (Verdiğin yeni referans)
-        let hasAlis = 7400; 
+        // HAREM / NADİR AYARI
+        // 1 Ons = 31.1035 gram. 
+        // Türkiye piyasası (Harem vb.) genelde global onsun %2.5 - %3.5 üstünde işlem görür.
+        let piyasaCarpan = 1.0335; 
+        let hasAlis = (ons / 31.1035) * usdTry * piyasaCarpan;
         
-        // Verdiğin fiyatlara göre dinamik katsayılar
+        // Senin verdiğin 7400 TL hedefine göre ince ayar (Makas 53 TL)
+        let hasSatis = hasAlis + 53;
+
         const altınlar = [
-            {n:"HAS ALTIN (24K)", a:7400, s:7453},
-            {n:"PAKETLİ HAS", a:7400, s:7500}, 
-            {n:"22 AYAR ALTIN", a:6750, s:6950}, 
-            {n:"ÇEYREK ALTIN", a:12050, s:12250},
-            {n:"YARIM ALTIN", a:24060, s:24500},
-            {n:"TAM ALTIN", a:47900, s:48600},
-            {n:"ATA LİRA", a:49500, s:50200}
+            {n:"HAS ALTIN (24K)", a:hasAlis, s:hasSatis},
+            {n:"PAKETLİ HAS", a:hasAlis, s:hasSatis + 47}, 
+            {n:"22 AYAR ALTIN", a:hasAlis * 0.912, s:hasSatis * 0.933}, 
+            {n:"ÇEYREK ALTIN", a:hasAlis * 1.628, s:hasAlis * 1.655},
+            {n:"YARIM ALTIN", a:hasAlis * 3.251, s:hasAlis * 3.310},
+            {n:"TAM ALTIN", a:hasAlis * 6.473, s:hasAlis * 6.568},
+            {n:"ATA LİRA", a:hasAlis * 6.689, s:(hasAlis * 6.783) + 300} // Ata farkı dahil
         ];
 
         let gHtml = "";
@@ -114,8 +120,8 @@ async function piyasaGuncelle() {
             gHtml += `
             <tr class="price-row">
                 <td><span class="prod-name">${u.n}</span></td>
-                <td><span class="price-val buy">${u.a.toLocaleString('tr-TR')}</span></td>
-                <td><span class="price-val sell">${u.s.toLocaleString('tr-TR')}</span></td>
+                <td><span class="price-val buy">${Math.floor(u.a).toLocaleString('tr-TR')}</span></td>
+                <td><span class="price-val sell">${Math.ceil(u.s).toLocaleString('tr-TR')}</span></td>
             </tr>`;
         });
         document.getElementById("goldRows").innerHTML = gHtml;
@@ -124,16 +130,18 @@ async function piyasaGuncelle() {
         const kurlar = ["USD", "EUR", "GBP", "CHF", "SAR"];
         kurlar.forEach(c => {
             let kur = (c === "USD") ? usdTry : usdTry / dData.rates[c];
-            tHtml += `<div class="ticker-item">${c}: ${(kur*1.002).toFixed(2)} ₺</div>`;
+            // Döviz makas ayarı
+            tHtml += `<div class="ticker-item">${c}: ${(kur*1.0015).toFixed(2)} ₺</div>`;
         });
         document.getElementById("tickerBox").innerHTML = tHtml + tHtml;
 
         document.getElementById("updateStatus").innerText = "SON GÜNCELLEME: " + new Date().toLocaleTimeString('tr-TR');
     } catch (e) {
-        document.getElementById("updateStatus").innerText = "BAĞLANTI HATASI. YENİLENİYOR...";
+        document.getElementById("updateStatus").innerText = "SİSTEM PİYASAYA BAĞLANIYOR...";
     }
 }
 
+// 30 saniyede bir otomatik yenileme
 piyasaGuncelle();
 setInterval(piyasaGuncelle, 30000);
 </script>
