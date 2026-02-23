@@ -82,7 +82,7 @@
     </div>
 </div>
 
-<div class="status-bar" id="updateStatus">Fiyatlar güncelleniyor...</div>
+<div class="status-bar" id="updateStatus">Fiyatlar senkronize ediliyor...</div>
 
 <script>
 async function piyasaGuncelle() {
@@ -95,19 +95,18 @@ async function piyasaGuncelle() {
         const aData = await aRes.json();
         const ons = aData.price;
 
-        // Has Altın Alış: 7389 TL (Referans Değer)
-        let hasAlis = 7389; 
-        let hasSatis = hasAlis + 44; 
-
+        // Has Altın Alış: 7400 TL (Verdiğin yeni referans)
+        let hasAlis = 7400; 
+        
+        // Verdiğin fiyatlara göre dinamik katsayılar
         const altınlar = [
-            {n:"HAS ALTIN (24K)", a:hasAlis, s:hasSatis},
-            {n:"PAKETLİ HAS", a:hasAlis, s:hasSatis + 50}, 
-            {n:"22 AYAR ALTIN", a:hasAlis * 0.912, s:hasSatis * 0.932}, 
-            {n:"ÇEYREK ALTIN", a:hasAlis * 1.62, s:hasAlis * 1.648},
-            {n:"YARIM ALTIN", a:hasAlis * 3.24, s:hasAlis * 3.296},
-            {n:"TAM ALTIN", a:hasAlis * 6.48, s:hasAlis * 6.592},
-            // Ata Alış sabit katsayı, Satış ise katsayı + 300 TL olarak ayarlandı
-            {n:"ATA LİRA", a:hasAlis * 6.685, s:(hasAlis * 6.728) + 300} 
+            {n:"HAS ALTIN (24K)", a:7400, s:7453},
+            {n:"PAKETLİ HAS", a:7400, s:7500}, 
+            {n:"22 AYAR ALTIN", a:6750, s:6950}, 
+            {n:"ÇEYREK ALTIN", a:12050, s:12250},
+            {n:"YARIM ALTIN", a:24060, s:24500},
+            {n:"TAM ALTIN", a:47900, s:48600},
+            {n:"ATA LİRA", a:49500, s:50200}
         ];
 
         let gHtml = "";
@@ -115,8 +114,8 @@ async function piyasaGuncelle() {
             gHtml += `
             <tr class="price-row">
                 <td><span class="prod-name">${u.n}</span></td>
-                <td><span class="price-val buy">${Math.floor(u.a).toLocaleString('tr-TR')}</span></td>
-                <td><span class="price-val sell">${Math.ceil(u.s).toLocaleString('tr-TR')}</span></td>
+                <td><span class="price-val buy">${u.a.toLocaleString('tr-TR')}</span></td>
+                <td><span class="price-val sell">${u.s.toLocaleString('tr-TR')}</span></td>
             </tr>`;
         });
         document.getElementById("goldRows").innerHTML = gHtml;
