@@ -2,33 +2,43 @@ const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const cors = require('cors');
+const path = require('path');
+
 const app = express();
-
 app.use(cors());
-app.use(express.static('public')); // HTML dosyaların public klasöründeyse
+app.use(express.static(path.join(__dirname, '/')));
 
-// Somaltin.com'dan veri çekme fonksiyonu
-async function fetchGoldData() {
+let lastFetchedPrice = "0";
+
+async function getGoldPrice() {
     try {
+        // Somaltin.com'a istek atıyoruz
         const { data } = await axios.get('http://somaltin.com/', {
             headers: { 'User-Agent': 'Mozilla/5.0' }
         });
         const $ = cheerio.load(data);
         
-        // Site yapısına göre Has Altın (Gram) verisini çekiyoruz
-        // Not: Selector site değiştikçe güncellenmelidir.
-        const gramAlis = $('.box.fiyatlar table tr:nth-child(2) td:nth-child(3)').text().trim();
-        const gramSatis = $('.box.fiyatlar table tr:nth-child(2) td:nth-child(4)').text().trim();
-
-        return { gramAlis, gramSatis };
+        // Sitedeki 2. satır, 4. sütun genellikle "Has Altın Satış" fiyatıdır
+        let price = $('.fiyatlar table tr').eq(1).find('td').eq(3).text().trim();
+        
+        if (price) {
+            lastFetchedPrice = price;
+            return price;
+        }
+        return lastFetchedPrice;
     } catch (error) {
-        return { error: "Veri çekilemedi" };
+        console.error("Veri çekme hatası:", error.message);
+        return lastFetchedPrice;
     }
 }
 
-app.get('/api/altin', async (req, res) => {
-    const prices = await fetchGoldData();
-    res.json(prices);
+// Frontend'in veri alacağı uç nokta
+app.get('/api/price', async (req, res) => {
+    const currentPrice = await getGoldPrice();
+    res.json({ price: currentPrice });
 });
 
-app.listen(3000, () => console.log('Sunucu 3000 portunda aktif!'));
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Sunucu http://localhost:${PORT} adresinde çalışıyor.`);
+});
