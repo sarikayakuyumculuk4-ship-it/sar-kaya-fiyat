@@ -2,103 +2,84 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Canlı Som Altın Takibi</title>
     <style>
-        body {
-            background-color: #050505;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .card {
+        body { background: #080808; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        
+        .container {
             background: #111;
-            padding: 50px;
-            border-radius: 30px;
-            border: 1px solid #222;
+            padding: 4rem;
+            border-radius: 40px;
+            border: 2px solid #222;
             text-align: center;
-            transition: all 0.8s ease;
+            transition: all 0.5s ease; /* Işık geçiş yumuşaklığı */
         }
 
-        .label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 15px;
+        .label { color: #666; text-transform: uppercase; letter-spacing: 4px; font-size: 0.9rem; margin-bottom: 20px; }
+        
+        .price { font-size: 5rem; font-weight: 900; margin: 0; }
+
+        /* YÜKSELİŞ: Yeşil Transparan Işık */
+        .up { 
+            border-color: rgba(0, 255, 127, 0.4) !important;
+            box-shadow: 0 0 60px rgba(0, 255, 127, 0.2);
+            color: #00ff7f;
         }
 
-        #price {
-            font-size: 5rem;
-            font-weight: 900;
-            margin: 0;
-            transition: color 0.5s;
-        }
-
-        /* DİNAMİK IŞIK EFEKTLERİ */
-        .glow-up {
-            border-color: rgba(46, 204, 113, 0.5);
-            box-shadow: 0 0 50px rgba(46, 204, 113, 0.2);
-            color: #2ecc71 !important;
-        }
-
-        .glow-down {
-            border-color: rgba(231, 76, 60, 0.5);
-            box-shadow: 0 0 50px rgba(231, 76, 60, 0.2);
-            color: #e74c3c !important;
+        /* DÜŞÜŞ: Kırmızı Transparan Işık */
+        .down { 
+            border-color: rgba(255, 71, 87, 0.4) !important;
+            box-shadow: 0 0 60px rgba(255, 71, 87, 0.2);
+            color: #ff4757;
         }
     </style>
 </head>
 <body>
 
-    <div id="mainCard" class="card">
+    <div id="box" class="container">
         <div class="label">Has Altın Satış</div>
-        <div id="price">...</div>
+        <div id="display" class="price">Yükleniyor...</div>
     </div>
 
     <script>
-        let oldVal = 0;
+        let lastPrice = 0;
 
-        async function checkPrice() {
+        async function update() {
             try {
-                const res = await fetch('/api/price');
+                const res = await fetch('http://localhost:3000/api/altin');
                 const data = await res.json();
+                const priceStr = data.fiyat;
                 
-                if (data.price === "---" || data.price === "Hata") return;
+                // Sayısal karşılaştırma için temizlik (2.850,50 -> 2850.50)
+                const currentPrice = parseFloat(priceStr.replace('.', '').replace(',', '.'));
+                
+                const box = document.getElementById('box');
+                const display = document.getElementById('display');
 
-                const currentVal = parseFloat(data.price.replace('.', '').replace(',', '.'));
-                const card = document.getElementById('mainCard');
-                const priceEl = document.getElementById('price');
+                display.innerText = priceStr + " TL";
 
-                priceEl.innerText = data.price + " TL";
-
-                if (oldVal !== 0) {
-                    if (currentVal > oldVal) {
-                        card.className = "card glow-up";
-                    } else if (currentVal < oldVal) {
-                        card.className = "card glow-down";
+                if (lastPrice !== 0 && currentPrice !== lastPrice) {
+                    if (currentPrice > lastPrice) {
+                        box.className = "container up";
+                    } else {
+                        box.className = "container down";
                     }
                 }
 
-                oldVal = currentVal;
+                lastPrice = currentPrice;
 
-                // 3 saniye sonra ışığı transparan hale geri getir
+                // 3 saniye sonra efekt sönükleşsin
                 setTimeout(() => {
-                    card.className = "card";
-                    priceEl.style.color = "white";
-                }, 3500);
+                    box.className = "container";
+                    display.style.color = "white";
+                }, 3000);
 
             } catch (e) {
-                console.log("Bağlantı hatası");
+                document.getElementById('display').innerText = "Sunucu Kapalı!";
             }
         }
 
-        setInterval(checkPrice, 4000); // 4 saniyede bir kontrol
-        checkPrice();
+        setInterval(update, 5000); // 5 saniyede bir güncelle
+        update();
     </script>
 </body>
 </html>
