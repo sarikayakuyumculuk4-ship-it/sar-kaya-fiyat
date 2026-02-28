@@ -2,99 +2,171 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Sarıkaya Kuyumculuk | Canlı Fiyat Paneli</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarıkaya Kuyumculuk | Canlı Sarrafiye Piyasası</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;500;800&display=swap" rel="stylesheet">
     <style>
-        /* ... Önceki CSS kodları ... */
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background-color: #fcfaf7; overflow: hidden; height: 100vh; }
+        :root {
+            --gold-primary: #c5a059;
+            --bg-creme: #fcfaf7;
+            --text-dark: #3a3a3a;
+            --up-color: rgba(46, 204, 113, 0.3); /* Yeşil transparan */
+            --down-color: rgba(231, 76, 60, 0.3); /* Kırmızı transparan */
+        }
         
-        /* Flaş Efektleri */
-        .flash-up { background-color: rgba(0, 255, 0, 0.3) !important; transition: background-color 1s ease; }
-        .flash-down { background-color: rgba(255, 0, 0, 0.3) !important; transition: background-color 1s ease; }
-        
-        /* Diğer Tasarım */
-        .price-val { transition: all 0.5s; padding: 5px; border-radius: 4px; }
-        /* ... (Kalan tasarım kodları öncekiyle aynı) ... */
+        body { 
+            margin: 0; font-family: 'Montserrat', sans-serif; 
+            background-color: var(--bg-creme);
+            background-image: url('https://www.transparenttextures.com/patterns/white-marble.png');
+            color: var(--text-dark); overflow: hidden; height: 100vh;
+        }
+
+        /* Üst Akan Bant */
+        .ticker-wrap {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: linear-gradient(90deg, #b38b47, #e2c275, #b38b47);
+            color: #fff; padding: 12px 0; font-size: 22px; font-weight: 800;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .ticker-move { display: flex; white-space: nowrap; animation: ticker-slide 35s linear infinite; }
+        .ticker-item { padding: 0 45px; border-right: 1px solid rgba(255,255,255,0.3); }
+        @keyframes ticker-slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        header { background: #fff; padding: 90px 20px 25px 20px; text-align: center; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        .brand-logo { font-family: 'Cinzel', serif; font-size: 65px; color: var(--gold-primary); letter-spacing: 12px; font-weight: 600; text-transform: uppercase; margin: 0; }
+        .brand-slogan { font-family: 'Montserrat', sans-serif; font-size: 18px; color: #888; letter-spacing: 5px; font-weight: 300; text-transform: uppercase; margin-top: 8px; display: block; }
+
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 10; }
+        .price-card { background: #ffffff; border-radius: 8px; padding: 20px 40px; box-shadow: 0 15px 50px rgba(0,0,0,0.04); border: 1px solid #efefef; }
+
+        .price-table { width: 100%; border-collapse: collapse; }
+        .table-head { border-bottom: 2px solid var(--gold-primary); }
+        .table-head th { padding: 15px 20px; text-align: right; color: #aaa; font-size: 14px; text-transform: uppercase; }
+        .table-head th:first-child { text-align: left; }
+
+        .price-row { border-bottom: 1px solid #fcfcfc; transition: background-color 1s ease; }
+        .price-row td { padding: 18px 20px; text-align: right; }
+        .price-row td:first-child { text-align: left; }
+
+        .prod-name { font-weight: 800; font-size: 26px; color: #222; }
+        .price-val { font-weight: 800; font-size: 45px; transition: color 0.3s; }
+        .price-val.buy { color: #2c3e50; }
+        .price-val.sell { color: var(--gold-primary); }
+
+        /* Değişim Işığı Animasyonları */
+        .flash-up { animation: flash-green 1.5s ease-out; }
+        .flash-down { animation: flash-red 1.5s ease-out; }
+
+        @keyframes flash-green { 0% { background-color: var(--up-color); } 100% { background-color: transparent; } }
+        @keyframes flash-red { 0% { background-color: var(--down-color); } 100% { background-color: transparent; } }
+
+        .status-bar { position: fixed; bottom: 0; width: 100%; background: #fff; border-top: 1px solid #eee; padding: 12px; font-weight: 600; text-align: center; font-size: 16px; color: #bbb; z-index: 1000; }
     </style>
 </head>
 <body>
 
-<div id="goldRows"></div>
+<div class="ticker-wrap">
+    <div class="ticker-move" id="tickerBox">CANLI VERİLER SENKRONİZE EDİLİYOR...</div>
+</div>
+
+<header>
+    <h1 class="brand-logo">SARIKAYA KUYUMCULUK</h1>
+    <span class="brand-slogan">1996'dan Günümüze Güven ve İstikrarla</span>
+</header>
+
+<div class="main-container">
+    <div class="price-card">
+        <table class="price-table">
+            <thead class="table-head">
+                <tr>
+                    <th>ÜRÜN ADI</th>
+                    <th>ALIŞ (TL)</th>
+                    <th>SATIŞ (TL)</th>
+                </tr>
+            </thead>
+            <tbody id="goldRows">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="status-bar" id="updateStatus">Sistem Aktif...</div>
 
 <script>
-// --- KALİBRASYON AYARI ---
-// Eğer fiyatlar senin ekranından düşükse bu sayıyı 1.0335 -> 1.0345 yap
-// Eğer yüksekse 1.0335 -> 1.0325 yap
-const FIYAT_DUZELTME_CARPANI = 1.0335; 
+let eskiFiyatlar = {};
 
 async function piyasaGuncelle() {
     try {
         const dRes = await fetch("https://open.er-api.com/v6/latest/USD");
         const dData = await dRes.json();
         const usdTry = dData.rates.TRY;
+
         const aRes = await fetch("https://api.gold-api.com/price/XAU");
         const aData = await aRes.json();
         const ons = aData.price;
 
-        let hasAlis = (ons / 31.1035) * usdTry * FIYAT_DUZELTME_CARPANI;
-        let hasSatis = hasAlis + 53;
+        // HAREM/NADİR AYARI (7497 TL Alış için çarpan 1.0475 civarıdır)
+        let haremCarpan = 1.0475; 
+        let hasAlis = (ons / 31.1035) * usdTry * haremCarpan;
+        let hasSatis = hasAlis + 55; // Has makas (7552 için)
 
-        // Fiyat Listesi
-        const data = [
-            {id: "has", n:"HAS ALTIN (24K)", a:hasAlis, s:hasSatis},
-            {id: "pak", n:"PAKETLİ HAS", a:hasAlis, s:hasSatis + 47}, 
-            {id: "22a", n:"22 AYAR ALTIN", a:hasAlis * 0.912, s:hasSatis * 0.933}, 
-            {id: "cey", n:"ÇEYREK ALTIN", a:hasAlis * 1.628, s:hasAlis * 1.655},
-            {id: "yar", n:"YARIM ALTIN", a:hasAlis * 3.251, s:hasAlis * 3.310},
-            {id: "tam", n:"TAM ALTIN", a:hasAlis * 6.473, s:hasAlis * 6.568},
-            {id: "ata", n:"ATA LİRA", a:hasAlis * 6.689, s:(hasAlis * 6.783) + 300}
+        const urunler = [
+            {id:"has", n:"HAS ALTIN (24K)", a:hasAlis, s:hasSatis},
+            {id:"paket", n:"PAKETLİ HAS", a:hasAlis, s:hasSatis + 48}, 
+            {id:"ayar22", n:"22 AYAR ALTIN", a:hasAlis * 0.912, s:hasSatis * 0.933}, 
+            {id:"ceyrek", n:"ÇEYREK ALTIN", a:hasAlis * 1.628, s:hasAlis * 1.658},
+            {id:"yarim", n:"YARIM ALTIN", a:hasAlis * 3.256, s:hasAlis * 3.316},
+            {id:"tam", n:"TAM ALTIN", a:hasAlis * 6.512, s:hasAlis * 6.632},
+            {id:"ata", n:"ATA LİRA", a:hasAlis * 6.689, s:(hasAlis * 6.785) + 300}
         ];
 
-        data.forEach(item => {
-            updateRow(item);
+        let gHtml = "";
+        urunler.forEach(u => {
+            let rowClass = "";
+            // Önceki fiyatla karşılaştır ve ışık efektini belirle
+            if(eskiFiyatlar[u.id]) {
+                if(u.a > eskiFiyatlar[u.id]) rowClass = "flash-up";
+                else if(u.a < eskiFiyatlar[u.id]) rowClass = "flash-down";
+            }
+            eskiFiyatlar[u.id] = u.a; // Yeni fiyatı kaydet
+
+            gHtml += `
+            <tr id="row-${u.id}" class="price-row ${rowClass}">
+                <td><span class="prod-name">${u.n}</span></td>
+                <td><span class="price-val buy">${Math.floor(u.a).toLocaleString('tr-TR')}</span></td>
+                <td><span class="price-val sell">${Math.ceil(u.s).toLocaleString('tr-TR')}</span></td>
+            </tr>`;
         });
-    } catch (e) { console.error(e); }
-}
 
-function updateRow(item) {
-    let rowId = "row-" + item.id;
-    let existingRow = document.getElementById(rowId);
-    
-    // Fiyatları yuvarla
-    let newBuy = Math.floor(item.a);
-    let newSell = Math.ceil(item.s);
+        document.getElementById("goldRows").innerHTML = gHtml;
 
-    if (!existingRow) {
-        // İlk yükleme
-        let html = `<div id="${rowId}" class="price-row">
-            <span class="prod-name">${item.n}</span>
-            <span class="price-val buy" id="${rowId}-a">${newBuy.toLocaleString('tr-TR')}</span>
-            <span class="price-val sell" id="${rowId}-s">${newSell.toLocaleString('tr-TR')}</span>
-        </div>`;
-        document.getElementById("goldRows").insertAdjacentHTML('beforeend', html);
-    } else {
-        // Güncelleme ve Flaş Efekti
-        updateCell(rowId + "-a", newBuy);
-        updateCell(rowId + "-s", newSell);
-    }
-}
+        // Döviz Bandı
+        let tHtml = "";
+        const kurlar = ["USD", "EUR", "GBP", "CHF", "SAR"];
+        kurlar.forEach(c => {
+            let kur = (c === "USD") ? usdTry : usdTry / dData.rates[c];
+            tHtml += `<div class="ticker-item">${c}: ${(kur*1.002).toFixed(2)} ₺</div>`;
+        });
+        document.getElementById("tickerBox").innerHTML = tHtml + tHtml;
 
-function updateCell(cellId, newVal) {
-    let el = document.getElementById(cellId);
-    let oldVal = parseInt(el.innerText.replace(/\./g, ''));
-    
-    if (newVal !== oldVal) {
-        el.innerText = newVal.toLocaleString('tr-TR');
-        // Efekt sınıfını ekle
-        el.className = (newVal > oldVal) ? "price-val flash-up" : "price-val flash-down";
-        // 1 saniye sonra efekti kaldır
+        document.getElementById("updateStatus").innerText = "SON GÜNCELLEME: " + new Date().toLocaleTimeString('tr-TR');
+        
+        // Işık efektini temizle (animasyonun tekrar edebilmesi için)
         setTimeout(() => {
-            el.className = "price-val";
-        }, 1000);
+            urunler.forEach(u => {
+                const element = document.getElementById(`row-${u.id}`);
+                if(element) element.classList.remove("flash-up", "flash-down");
+            });
+        }, 2000);
+
+    } catch (e) {
+        document.getElementById("updateStatus").innerText = "VERİ ALINAMIYOR...";
     }
 }
 
+// Sayfa yenilenmeden arka planda güncelleme
 piyasaGuncelle();
-setInterval(piyasaGuncelle, 15000); // 15 saniyeye indirdim
+setInterval(piyasaGuncelle, 30000); 
 </script>
 </body>
 </html>
