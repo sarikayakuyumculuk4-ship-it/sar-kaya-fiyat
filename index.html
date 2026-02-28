@@ -3,24 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sarıkaya Kuyumculuk | Canlı Sarrafiye</title>
+    <title>Sarıkaya Kuyumculuk | Canlı Ekran</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --gold-primary: #c5a059;
-            --bg-white: #ffffff;
-            --text-main: #2c3e50;
-            --up-flash: rgba(46, 204, 113, 0.35);
-            --down-flash: rgba(231, 76, 60, 0.35);
+            --gold: #c5a059;
+            --up: rgba(46, 204, 113, 0.35);
+            --down: rgba(231, 76, 60, 0.35);
         }
-        
         body { 
-            margin: 0; font-family: 'Montserrat', sans-serif; 
-            background-color: #f8f9fa; color: var(--text-main);
-            overflow: hidden; height: 100vh;
+            margin: 0; font-family: 'Montserrat', sans-serif; background: #f8f9fa; 
+            color: #2c3e50; overflow: hidden; height: 100vh;
         }
-
-        /* Üst Döviz Bandı */
         .ticker-wrap {
             position: fixed; top: 0; width: 100%; z-index: 1000;
             background: linear-gradient(90deg, #b38b47, #e2c275, #b38b47);
@@ -31,21 +25,124 @@
         @keyframes ticker-slide { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
         header { background: #fff; padding: 100px 20px 30px 20px; text-align: center; border-bottom: 2px solid #eee; }
-        .brand-logo { font-family: 'Cinzel', serif; font-size: 60px; color: var(--gold-primary); letter-spacing: 10px; margin: 0; }
+        .brand-logo { font-family: 'Cinzel', serif; font-size: 60px; color: var(--gold); letter-spacing: 10px; margin: 0; }
         .brand-slogan { font-size: 18px; color: #999; letter-spacing: 4px; text-transform: uppercase; margin-top: 10px; display: block; }
 
         .main-container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
         .price-card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
         .price-table { width: 100%; border-collapse: collapse; }
-        .table-head th { padding: 15px; text-align: right; color: #bbb; font-size: 16px; border-bottom: 3px solid var(--gold-primary); }
+        .table-head th { padding: 15px; text-align: right; color: #bbb; font-size: 16px; border-bottom: 3px solid var(--gold); }
         .table-head th:first-child { text-align: left; }
 
-        .price-row { border-bottom: 1px solid #f1f1f1; transition: background-color 1.2s ease; }
+        .price-row { border-bottom: 1px solid #f1f1f1; transition: background 1s ease; }
         .price-row td { padding: 22px 15px; text-align: right; font-weight: 800; }
         .price-row td:first-child { text-align: left; }
 
         .prod-name { font-size: 28px; color: #333; }
         .price-val { font-size: 48px; }
-        .price-val.buy { color: #2c3e50; }
-        .price-val.sell {
+        .price-val.sell { color: var(--gold); }
+
+        .flash-up { background-color: var(--up) !important; }
+        .flash-down { background-color: var(--down) !important; }
+
+        .status-bar { position: fixed; bottom: 0; width: 100%; background: #fff; padding: 10px; text-align: center; color: #ccc; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="ticker-wrap"><div class="ticker-move" id="tickerBox">PİYASA VERİLERİ YÜKLENİYOR...</div></div>
+
+<header>
+    <h1 class="brand-logo">SARIKAYA KUYUMCULUK</h1>
+    <span class="brand-slogan">1996'dan Günümüze Güven ve İstikrarla</span>
+</header>
+
+<div class="main-container">
+    <div class="price-card">
+        <table class="price-table">
+            <thead class="table-head">
+                <tr><th>ÜRÜN ADI</th><th>ALIŞ (TL)</th><th>SATIŞ (TL)</th></tr>
+            </thead>
+            <tbody id="goldRows">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="status-bar" id="updateStatus">Sistem Başlatılıyor...</div>
+
+<script>
+let lastPrices = {};
+// İlk açılışta beyaz ekran olmaması için varsayılan referanslar
+let currentHas = 7497; 
+
+async function updateData() {
+    try {
+        const dRes = await fetch("https://open.er-api.com/v6/latest/USD");
+        const dData = await dRes.json();
+        const usdTry = dData.rates.TRY;
+
+        const aRes = await fetch("https://api.gold-api.com/price/XAU");
+        const aData = await aRes.json();
+        const ons = aData.price;
+
+        // Fiyat Kalibrasyonu (7497 için düzenlendi)
+        let fixFactor = 1.0285; 
+        currentHas = (ons / 31.1035) * usdTry * fixFactor;
+    } catch (err) {
+        console.log("Veri çekme hatası, mevcut fiyattan devam ediliyor.");
+    } finally {
+        renderTable();
+    }
+}
+
+function renderTable() {
+    let gap = 55;
+    const list = [
+        {id:"h24", n:"HAS ALTIN (24K)", a:currentHas, s:currentHas + gap},
+        {id:"ph", n:"PAKETLİ HAS", a:currentHas, s:currentHas + gap + 45},
+        {id:"a22", n:"22 AYAR ALTIN", a:currentHas * 0.912, s:(currentHas + gap) * 0.933},
+        {id:"cy", n:"ÇEYREK ALTIN", a:currentHas * 1.628, s:(currentHas + gap) * 1.660},
+        {id:"yr", n:"YARIM ALTIN", a:currentHas * 3.256, s:(currentHas + gap) * 3.320},
+        {id:"tm", n:"TAM ALTIN", a:currentHas * 6.512, s:(currentHas + gap) * 6.640},
+        {id:"at", n:"ATA LİRA", a:currentHas * 6.690, s:((currentHas + gap) * 6.780) + 300}
+    ];
+
+    let html = "";
+    list.forEach(u => {
+        let effect = "";
+        if(lastPrices[u.id]) {
+            if(u.a > lastPrices[u.id]) effect = "flash-up";
+            else if(u.a < lastPrices[u.id]) effect = "flash-down";
+        }
+        lastPrices[u.id] = u.a;
+
+        html += `
+        <tr id="row-${u.id}" class="price-row ${effect}">
+            <td><span class="prod-name">${u.n}</span></td>
+            <td><span class="price-val buy">${Math.floor(u.a).toLocaleString('tr-TR')}</span></td>
+            <td><span class="price-val sell">${Math.ceil(u.s).toLocaleString('tr-TR')}</span></td>
+        </tr>`;
+    });
+    
+    document.getElementById("goldRows").innerHTML = html;
+    document.getElementById("updateStatus").innerText = "SON GÜNCELLEME: " + new Date().toLocaleTimeString('tr-TR');
+    
+    // Döviz bandı için sembolik ticker
+    document.getElementById("tickerBox").innerHTML = `<div class="ticker-item">USD: CANLI</div><div class="ticker-item">EUR: CANLI</div>`.repeat(5);
+
+    setTimeout(() => {
+        list.forEach(u => {
+            let el = document.getElementById(`row-${u.id}`);
+            if(el) el.classList.remove("flash-up", "flash-down");
+        });
+    }, 1500);
+}
+
+// Başlat
+updateData();
+setInterval(updateData, 20000); 
+</script>
+</body>
+</html>
