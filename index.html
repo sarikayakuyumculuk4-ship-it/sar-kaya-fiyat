@@ -2,84 +2,112 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canlı Altın Takibi</title>
     <style>
-        body { background: #080808; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        
-        .container {
-            background: #111;
-            padding: 4rem;
-            border-radius: 40px;
-            border: 2px solid #222;
-            text-align: center;
-            transition: all 0.5s ease; /* Işık geçiş yumuşaklığı */
+        body { 
+            background: #0a0a0a; 
+            color: white; 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
         }
 
-        .label { color: #666; text-transform: uppercase; letter-spacing: 4px; font-size: 0.9rem; margin-bottom: 20px; }
-        
-        .price { font-size: 5rem; font-weight: 900; margin: 0; }
+        .card {
+            background: #151515;
+            padding: 3rem 5rem;
+            border-radius: 30px;
+            border: 2px solid #252525;
+            text-align: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
 
-        /* YÜKSELİŞ: Yeşil Transparan Işık */
-        .up { 
-            border-color: rgba(0, 255, 127, 0.4) !important;
-            box-shadow: 0 0 60px rgba(0, 255, 127, 0.2);
+        .label {
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-text {
+            font-size: 5rem;
+            font-weight: 800;
+            margin: 0;
+            transition: color 0.4s;
+        }
+
+        /* IŞIK EFEKTLERİ */
+        .up {
+            border-color: rgba(0, 255, 127, 0.4);
+            box-shadow: 0 0 50px rgba(0, 255, 127, 0.15);
             color: #00ff7f;
         }
 
-        /* DÜŞÜŞ: Kırmızı Transparan Işık */
-        .down { 
-            border-color: rgba(255, 71, 87, 0.4) !important;
-            box-shadow: 0 0 60px rgba(255, 71, 87, 0.2);
+        .down {
+            border-color: rgba(255, 71, 87, 0.4);
+            box-shadow: 0 0 50px rgba(255, 71, 87, 0.15);
             color: #ff4757;
         }
+
+        .small-text { font-size: 1rem; color: #444; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <div id="box" class="container">
-        <div class="label">Has Altın Satış</div>
-        <div id="display" class="price">Yükleniyor...</div>
+    <div id="goldCard" class="card">
+        <div class="label">Gram Altın (Satış)</div>
+        <div id="priceDisplay" class="price-text">...</div>
+        <div class="small-text">Canlı Veri Sistemi</div>
     </div>
 
     <script>
-        let lastPrice = 0;
+        let lastPriceValue = 0;
 
-        async function update() {
+        async function updatePrice() {
             try {
-                const res = await fetch('http://localhost:3000/api/altin');
-                const data = await res.json();
-                const priceStr = data.fiyat;
+                const response = await fetch('http://localhost:3000/api/altin');
+                const data = await response.json();
                 
-                // Sayısal karşılaştırma için temizlik (2.850,50 -> 2850.50)
-                const currentPrice = parseFloat(priceStr.replace('.', '').replace(',', '.'));
+                if (data.fiyat === "---") return;
+
+                // Virgül ve noktayı temizleyip sayıya çeviriyoruz (Örn: 2.500,50 -> 2500.50)
+                const currentPrice = parseFloat(data.fiyat.replace('.', '').replace(',', '.'));
                 
-                const box = document.getElementById('box');
-                const display = document.getElementById('display');
+                const card = document.getElementById('goldCard');
+                const display = document.getElementById('priceDisplay');
 
-                display.innerText = priceStr + " TL";
+                display.innerText = data.fiyat + " TL";
 
-                if (lastPrice !== 0 && currentPrice !== lastPrice) {
-                    if (currentPrice > lastPrice) {
-                        box.className = "container up";
-                    } else {
-                        box.className = "container down";
+                // Fiyat Değişimi Kontrolü ve Işık Yakma
+                if (lastPriceValue !== 0) {
+                    if (currentPrice > lastPriceValue) {
+                        card.className = "card up";
+                    } else if (currentPrice < lastPriceValue) {
+                        card.className = "card down";
                     }
                 }
 
-                lastPrice = currentPrice;
+                lastPriceValue = currentPrice;
 
-                // 3 saniye sonra efekt sönükleşsin
+                // 4 saniye sonra ışığı transparan/normal hale getir
                 setTimeout(() => {
-                    box.className = "container";
+                    card.className = "card";
                     display.style.color = "white";
-                }, 3000);
+                }, 4000);
 
-            } catch (e) {
-                document.getElementById('display').innerText = "Sunucu Kapalı!";
+            } catch (err) {
+                document.getElementById('priceDisplay').innerText = "BAĞLANTI YOK";
             }
         }
 
-        setInterval(update, 5000); // 5 saniyede bir güncelle
-        update();
+        // Her 5 saniyede bir kontrol et
+        setInterval(updatePrice, 5000);
+        updatePrice(); // Sayfa ilk açıldığında çek
     </script>
 </body>
 </html>
