@@ -1,27 +1,34 @@
+const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const express = require('express');
+const cors = require('cors');
 const app = express();
 
-let lastPrices = {}; // Değişimi kontrol etmek için eski fiyatları tutuyoruz
+app.use(cors());
+app.use(express.static('public')); // HTML dosyaların public klasöründeyse
 
-async function getGoldPrices() {
+// Somaltin.com'dan veri çekme fonksiyonu
+async function fetchGoldData() {
     try {
-        const { data } = await axios.get('http://somaltin.com/');
+        const { data } = await axios.get('http://somaltin.com/', {
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
         const $ = cheerio.load(data);
-        let prices = {};
-
-        // Somaltin.com'daki tablo yapısına göre seçicileri (selector) buraya ekliyoruz
-        // Örnek: $('.price-row').each(...) 
-        // Not: Sitenin HTML yapısı değişkendir, CSS selector'ları kontrol edilmelidir.
         
-        return prices;
+        // Site yapısına göre Has Altın (Gram) verisini çekiyoruz
+        // Not: Selector site değiştikçe güncellenmelidir.
+        const gramAlis = $('.box.fiyatlar table tr:nth-child(2) td:nth-child(3)').text().trim();
+        const gramSatis = $('.box.fiyatlar table tr:nth-child(2) td:nth-child(4)').text().trim();
+
+        return { gramAlis, gramSatis };
     } catch (error) {
-        console.error("Veri çekme hatası:", error);
+        return { error: "Veri çekilemedi" };
     }
 }
 
-app.get('/api/prices', async (req, res) => {
-    const prices = await getGoldPrices();
+app.get('/api/altin', async (req, res) => {
+    const prices = await fetchGoldData();
     res.json(prices);
 });
+
+app.listen(3000, () => console.log('Sunucu 3000 portunda aktif!'));
