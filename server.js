@@ -5,38 +5,32 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
-app.use(express.static('./')); // HTML dosyanla aynı klasörde çalışır
 
-async function getGoldPrice() {
+// Som Altın'dan veriyi kazıyan ana fonksiyon
+async function getPrice() {
     try {
-        const { data } = await axios.get('http://somaltin.com/', {
-            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+        const response = await axios.get('http://somaltin.com/', {
+            timeout: 5000,
+            headers: { 'User-Agent': 'Mozilla/5.0' }
         });
-        const $ = cheerio.load(data);
-        let goldPrice = "---";
-
-        // Tablodaki tüm satırları döngüye alıyoruz
-        $('table tr').each((index, element) => {
-            const rowText = $(element).text().toLowerCase();
-            // Satırda "has altın" veya "has altin" geçiyor mu?
-            if (rowText.includes('has alt')) {
-                // Bu satırdaki 4. sütunu (Satış) al
-                goldPrice = $(element).find('td').eq(3).text().trim();
+        const $ = cheerio.load(response.data);
+        
+        // Sitedeki tabloyu tarayıp "Has Altın" satırını bulur
+        let price = "";
+        $('table tr').each((i, el) => {
+            if ($(el).text().includes('Has Altın')) {
+                price = $(el).find('td').eq(3).text().trim(); // 4. sütun Satış fiyatıdır
             }
         });
-
-        return goldPrice;
-    } catch (error) {
-        console.error("Veri çekme hatası:", error.message);
-        return "Hata";
+        return price || "Veri Alınamadı";
+    } catch (err) {
+        return "Bağlantı Hatası";
     }
 }
 
-app.get('/api/price', async (req, res) => {
-    const price = await getGoldPrice();
-    res.json({ price });
+app.get('/api/altin', async (req, res) => {
+    const data = await getPrice();
+    res.json({ fiyat: data });
 });
 
-app.listen(3000, () => {
-    console.log('Sunucu http://localhost:3000 adresinde ayağa kalktı!');
-});
+app.listen(3000, () => console.log("Sunucu 3000 portunda hazır!"));
