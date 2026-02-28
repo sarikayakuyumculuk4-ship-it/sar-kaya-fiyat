@@ -2,79 +2,124 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Canlı Altın Takibi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canlı Altın Borsası</title>
     <style>
-        body { background: #0f0f0f; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        
-        .price-card {
-            background: #1e1e1e;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            border: 1px solid #333;
-            transition: all 0.5s ease;
-            min-width: 250px;
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: #141414;
+            --text: #ffffff;
+            --border: #333;
         }
 
-        .price-value { font-size: 2.5rem; font-weight: bold; margin: 10px 0; }
-        .label { color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-        /* Transparan Işık Efektleri */
-        .up-glow { 
-            border-color: #2ecc71; 
-            box-shadow: 0 0 30px rgba(46, 204, 113, 0.4); 
+        .container {
+            text-align: center;
+        }
+
+        .price-card {
+            background: var(--card-bg);
+            padding: 40px 60px;
+            border-radius: 24px;
+            border: 2px solid var(--border);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .label {
+            font-size: 14px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* IŞIK EFEKTLERİ */
+        .up-trend {
+            border-color: #2ecc71;
+            box-shadow: 0 0 40px rgba(46, 204, 113, 0.3);
             color: #2ecc71;
         }
-        .down-glow { 
-            border-color: #e74c3c; 
-            box-shadow: 0 0 30px rgba(231, 76, 60, 0.4); 
+
+        .down-trend {
+            border-color: #e74c3c;
+            box-shadow: 0 0 40px rgba(231, 76, 60, 0.3);
             color: #e74c3c;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #444;
         }
     </style>
 </head>
 <body>
 
-    <div id="card" class="price-card">
-        <div class="label">Has Altın Satış</div>
-        <div id="price" class="price-value">Yükleniyor...</div>
+    <div class="container">
+        <div id="goldCard" class="price-card">
+            <div class="label">Has Altın Satış</div>
+            <div id="goldPrice" class="price">...</div>
+            <div class="status">Som Altın Verisi (Canlı)</div>
+        </div>
     </div>
 
     <script>
-        let lastPrice = 0;
+        let previousPrice = 0;
 
-        async function updatePrice() {
+        async function fetchPrice() {
             try {
-                const res = await fetch('/api/altin');
-                const data = await res.json();
-                const currentPrice = parseFloat(data.gramSatis.replace(',', '.'));
-                const displayPrice = data.gramSatis;
+                const response = await fetch('/api/price');
+                const data = await response.json();
+                
+                // Virgülü noktaya çevirip sayıya dönüştür (Karşılaştırma için)
+                const currentPriceFloat = parseFloat(data.price.replace('.', '').replace(',', '.'));
+                const card = document.getElementById('goldCard');
+                const priceDisplay = document.getElementById('goldPrice');
 
-                const card = document.getElementById('card');
-                const priceText = document.getElementById('price');
-
-                // Işık rengi kontrolü
-                if (lastPrice !== 0) {
-                    if (currentPrice > lastPrice) {
-                        card.className = "price-card up-glow";
-                    } else if (currentPrice < lastPrice) {
-                        card.className = "price-card down-glow";
+                if (previousPrice !== 0) {
+                    if (currentPriceFloat > previousPrice) {
+                        card.className = 'price-card up-trend';
+                    } else if (currentPriceFloat < previousPrice) {
+                        card.className = 'price-card down-trend';
                     }
                 }
 
-                priceText.innerText = displayPrice + " TL";
-                lastPrice = currentPrice;
+                priceDisplay.innerText = data.price + " TL";
+                previousPrice = currentPriceFloat;
 
-                // 3 saniye sonra ışık efektini normale döndür (isteğe bağlı)
-                setTimeout(() => { card.style.boxShadow = "none"; card.style.borderColor = "#333"; }, 3000);
+                // 4 saniye sonra efekti yumuşat (Sürekli parlama göz yormasın)
+                setTimeout(() => {
+                    card.style.boxShadow = "none";
+                    card.style.borderColor = "#333";
+                    priceDisplay.style.color = "white";
+                }, 4000);
 
-            } catch (err) {
-                console.log("Hata:", err);
+            } catch (error) {
+                console.error("Veri güncellenemedi:", error);
             }
         }
 
         // 5 saniyede bir güncelle
-        setInterval(updatePrice, 5000);
-        updatePrice(); // Sayfa açılınca ilk veriyi çek
+        setInterval(fetchPrice, 5000);
+        fetchPrice(); // İlk açılışta çalıştır
     </script>
 </body>
 </html>
