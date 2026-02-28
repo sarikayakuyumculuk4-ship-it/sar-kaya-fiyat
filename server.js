@@ -1,45 +1,27 @@
-const express = require('express');
 const axios = require('axios');
-const path = require('path');
+const cheerio = require('cheerio');
+const express = require('express');
 const app = express();
 
-const katsayilar = {
-    ceyrek: { alis: 1.62, satis: 1.64 },
-    yarim: { alis: 3.24, satis: 3.27 },
-    tam: { alis: 6.46, satis: 6.52 },
-    ata: { alis: 6.68, satis: 6.715 },
-    ayar22: { alis: 0.913, satis: 0.930 }
-};
+let lastPrices = {}; // Değişimi kontrol etmek için eski fiyatları tutuyoruz
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.get('/api/fiyatlar', async (req, res) => {
+async function getGoldPrices() {
     try {
-        // Döviz.com'un ham verisinden has altını çekiyoruz (Hızlı ve Key gerektirmez)
-        const response = await axios.get('https://finans.truncgil.com/today.json');
+        const { data } = await axios.get('http://somaltin.com/');
+        const $ = cheerio.load(data);
+        let prices = {};
+
+        // Somaltin.com'daki tablo yapısına göre seçicileri (selector) buraya ekliyoruz
+        // Örnek: $('.price-row').each(...) 
+        // Not: Sitenin HTML yapısı değişkendir, CSS selector'ları kontrol edilmelidir.
         
-        // JSON içinden "Gram Altın" verisini buluyoruz
-        const hasVerisi = response.data["Gram Altın"];
-        if (!hasVerisi) throw new Error("Veri formatı uyuşmuyor");
-
-        const hasAltin = parseFloat(hasVerisi.Alış.replace('.', '').replace(',', '.'));
-
-        const hesaplanan = {
-            hasAltin: hasAltin,
-            ceyrek: { alis: Math.floor(hasAltin * katsayilar.ceyrek.alis), satis: Math.ceil(hasAltin * katsayilar.ceyrek.satis) },
-            yarim: { alis: Math.floor(hasAltin * katsayilar.yarim.alis), satis: Math.ceil(hasAltin * katsayilar.yarim.satis) },
-            tam: { alis: Math.floor(hasAltin * katsayilar.tam.alis), satis: Math.ceil(hasAltin * katsayilar.tam.satis) },
-            ata: { alis: Math.floor(hasAltin * katsayilar.ata.alis), satis: Math.ceil(hasAltin * katsayilar.ata.satis) },
-            ayar22: { alis: (hasAltin * katsayilar.ayar22.alis).toFixed(2), satis: (hasAltin * katsayilar.ayar22.satis).toFixed(2) }
-        };
-        res.json(hesaplanan);
+        return prices;
     } catch (error) {
-        console.error("HATA DETAYI:", error.message);
-        res.status(500).json({ error: "Fiyatlar şu an alınamıyor: " + error.message });
+        console.error("Veri çekme hatası:", error);
     }
-});
+}
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server çalışıyor: ${PORT}`));
+app.get('/api/prices', async (req, res) => {
+    const prices = await getGoldPrices();
+    res.json(prices);
+});
