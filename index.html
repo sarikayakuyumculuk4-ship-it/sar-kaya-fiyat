@@ -1,27 +1,80 @@
-.price-card {
-    transition: all 0.5s ease;
-    padding: 15px;
-    border-radius: 10px;
-    background: #1a1a1a;
-    color: white;
-}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Canlı Altın Takibi</title>
+    <style>
+        body { background: #0f0f0f; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        
+        .price-card {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid #333;
+            transition: all 0.5s ease;
+            min-width: 250px;
+        }
 
-/* Yükseliş Efekti */
-.up-flash {
-    animation: glow-green 1.5s infinite alternate;
-}
+        .price-value { font-size: 2.5rem; font-weight: bold; margin: 10px 0; }
+        .label { color: #888; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Düşüş Efekti */
-.down-flash {
-    animation: glow-red 1.5s infinite alternate;
-}
+        /* Transparan Işık Efektleri */
+        .up-glow { 
+            border-color: #2ecc71; 
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.4); 
+            color: #2ecc71;
+        }
+        .down-glow { 
+            border-color: #e74c3c; 
+            box-shadow: 0 0 30px rgba(231, 76, 60, 0.4); 
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
 
-@keyframes glow-green {
-    from { box-shadow: 0 0 5px rgba(0, 255, 0, 0.2); }
-    to { box-shadow: 0 0 20px rgba(0, 255, 0, 0.6); }
-}
+    <div id="card" class="price-card">
+        <div class="label">Has Altın Satış</div>
+        <div id="price" class="price-value">Yükleniyor...</div>
+    </div>
 
-@keyframes glow-red {
-    from { box-shadow: 0 0 5px rgba(255, 0, 0, 0.2); }
-    to { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
-}
+    <script>
+        let lastPrice = 0;
+
+        async function updatePrice() {
+            try {
+                const res = await fetch('/api/altin');
+                const data = await res.json();
+                const currentPrice = parseFloat(data.gramSatis.replace(',', '.'));
+                const displayPrice = data.gramSatis;
+
+                const card = document.getElementById('card');
+                const priceText = document.getElementById('price');
+
+                // Işık rengi kontrolü
+                if (lastPrice !== 0) {
+                    if (currentPrice > lastPrice) {
+                        card.className = "price-card up-glow";
+                    } else if (currentPrice < lastPrice) {
+                        card.className = "price-card down-glow";
+                    }
+                }
+
+                priceText.innerText = displayPrice + " TL";
+                lastPrice = currentPrice;
+
+                // 3 saniye sonra ışık efektini normale döndür (isteğe bağlı)
+                setTimeout(() => { card.style.boxShadow = "none"; card.style.borderColor = "#333"; }, 3000);
+
+            } catch (err) {
+                console.log("Hata:", err);
+            }
+        }
+
+        // 5 saniyede bir güncelle
+        setInterval(updatePrice, 5000);
+        updatePrice(); // Sayfa açılınca ilk veriyi çek
+    </script>
+</body>
+</html>
