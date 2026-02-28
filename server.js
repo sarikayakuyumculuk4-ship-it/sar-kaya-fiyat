@@ -6,31 +6,36 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
-// Som Altın'dan veriyi kazıyan ana fonksiyon
-async function getPrice() {
+async function getGoldPrice() {
     try {
-        const response = await axios.get('http://somaltin.com/', {
-            timeout: 5000,
+        // En stabil veri kaynağına istek atıyoruz
+        const { data } = await axios.get('https://kur.doviz.com/altin/gram-altin', {
             headers: { 'User-Agent': 'Mozilla/5.0' }
         });
-        const $ = cheerio.load(response.data);
+        const $ = cheerio.load(data);
         
-        // Sitedeki tabloyu tarayıp "Has Altın" satırını bulur
-        let price = "";
-        $('table tr').each((i, el) => {
-            if ($(el).text().includes('Has Altın')) {
-                price = $(el).find('td').eq(3).text().trim(); // 4. sütun Satış fiyatıdır
-            }
-        });
-        return price || "Veri Alınamadı";
-    } catch (err) {
-        return "Bağlantı Hatası";
+        // Fiyatın olduğu ana HTML elementini buluyoruz
+        let price = $('span[data-socket-key="gram-altin"][data-socket-attr="s"]').text().trim();
+        
+        if (!price) {
+            // Alternatif seçici (Eğer üstteki değişirse)
+            price = $('.value').first().text().trim();
+        }
+
+        return price;
+    } catch (error) {
+        console.error("Veri çekme hatası:", error.message);
+        return "---";
     }
 }
 
 app.get('/api/altin', async (req, res) => {
-    const data = await getPrice();
-    res.json({ fiyat: data });
+    const price = await getGoldPrice();
+    res.json({ fiyat: price });
 });
 
-app.listen(3000, () => console.log("Sunucu 3000 portunda hazır!"));
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`\n🚀 Sunucu Çalışıyor: http://localhost:${PORT}`);
+    console.log(`📡 Veri adresi: http://localhost:${PORT}/api/altin\n`);
+});
